@@ -1,0 +1,66 @@
+services:
+  app:  # Laravel PHP application container
+    build:
+      context: ./  # Use current directory as build context
+      dockerfile: Dockerfile  # Build using this Dockerfile
+      args:
+        user: laravel  # Username passed to Dockerfile (used to create a non-root user)
+        uid: 1000      # User ID for permission consistency
+    image: laravel-app  # Name of the built Docker image
+    container_name: laravel-app  # Friendly name for the container
+    restart: unless-stopped  # Auto-restart the container unless manually stopped
+    working_dir: /var/www/  # Default working directory inside the containerv
+    volumes:
+      - ./:/var/www  # Mount current project directory into the container
+    networks:
+      - laravel  # Attach this container to the "laravel" network
+
+  db:  # MySQL database container
+    image: mysql:latest  # Use official MySQL latest image
+    ports:
+      - "3306:3306"
+    container_name: laravel-mysql  # Friendly name for the container
+    restart: unless-stopped  # Auto-restart unless manually stopped
+    environment:  # Environment variables for MySQL setup
+      MYSQL_DATABASE: ${DB_DATABASE}  # These pull from your .env file
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      # MYSQL_PASSWORD: ${DB_PASSWORD}
+      # MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev  # Tag for service discovery (optional)
+      SERVICE_NAME: mysql
+    volumes:
+      - mysql_data:/var/lib/mysql  # <--- persist MySQL data
+      - ./docker-compose/mysql:/docker-entrypoint-initdb.d
+        # Mount custom SQL files or scripts for DB initialization
+    networks:
+      - laravel  # Same network as app so they can talk to each other
+
+  redis:
+      image: redis:alpine  # Lightweight Redis image
+      container_name: laravel-redis
+      restart: unless-stopped
+      ports:
+        - "6379:6379"
+      networks:
+        - laravel  # Same network so app can talk to Redis
+
+  nginx:  # Web server container to serve your app
+    image: nginx:alpine  # Lightweight official Nginx image
+    container_name: laravel-nginx  # Friendly name for the container
+    restart: unless-stopped  # Restart unless manually stopped
+    ports:
+      - 8000:80  # Map port 80 inside the container to 8000 on your machine (localhost:8000)
+    volumes:
+      - ./:/var/www  # Share code with Nginx
+      - ./docker/nginx:/etc/nginx/conf.d/
+        # Mount custom Nginx config (e.g., default.conf)
+    networks:
+      - laravel  # Same network so Nginx can reach the app container
+
+# Define the shared network for all services
+networks:
+  laravel:
+    driver: bridge  # Use the default bridge driver for isolated communication
+
+volumes:
+  mysql_data:
