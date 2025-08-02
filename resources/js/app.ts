@@ -7,6 +7,11 @@ import { createApp, h } from 'vue';
 import { ZiggyVue } from 'ziggy-js';
 import { initializeTheme } from './composables/useAppearance';
 
+import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
+
+
 // Extend ImportMeta interface for Vite...
 declare module 'vite/client' {
     interface ImportMetaEnv {
@@ -29,12 +34,26 @@ createInertiaApp({
         createApp({ render: () => h(App, props) })
             .use(plugin)
             .use(ZiggyVue)
+            .use(Vue3Toastify,
+                {
+                    autoClose: 3000,
+                    position: "top-right",
+                    theme: "dark",
+                    pauseOnHover: true,
+                    draggable: true,
+                    closeOnClick: true,
+                    // ...
+                } as ToastContainerOptions,
+            ) 
             .mount(el);
     },
     progress: {
         color: '#4B5563',
     },
+
 });
+
 
 // This will set light / dark mode on page load...
 initializeTheme();
+

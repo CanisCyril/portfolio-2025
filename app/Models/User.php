@@ -8,12 +8,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Haxneeraj\LaravelVirtualWallet\Interfaces\WalletInterface;
 use Haxneeraj\LaravelVirtualWallet\Traits\HasVirtualWallet;
-
+use App\Models\Games\Mining\UserPickaxe;
+use App\Models\Games\Mining\UserOre;
+use App\Models\Games\Mining\UserMiningLevel;
+use App\Models\Games\Mining\UserGold;
 
 class User extends Authenticatable implements WalletInterface
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasVirtualWallet;
+    use HasFactory;
+    use Notifiable;
+    use HasVirtualWallet;
 
     /**
      * The attributes that are mass assignable.
@@ -53,4 +58,27 @@ class User extends Authenticatable implements WalletInterface
 
     //   return $this->hasMany(Wallet::class);
     // }
+
+    public function equippedPickaxe()
+    {
+        return $this->hasOne(UserPickaxe::class)
+            ->where('equipped', true)
+            ->with('pickaxe'); // Optional: eager load actual pickaxe model
+    }
+
+    public function ores()
+    {
+        return $this->hasMany(UserOre::class, 'user_id')
+            ->with('ore');
+    }
+
+    public function level()
+    {
+        return $this->hasOne(UserMiningLevel::class, 'user_id');
+    }
+
+    public function gold()
+    {
+        return $this->hasOne(UserGold::class, 'user_id');
+    }
 }

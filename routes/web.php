@@ -4,11 +4,20 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Http\Controllers\ECommerce\DashboardController;
 use App\Http\Controllers\ECommerce\ProductSearchController;
-use App\Http\Controllers\Games\MiningController;
+use App\Http\Controllers\Games\Mining\MiningController;
+use App\Http\Controllers\Games\Mining\PickaxeController;
+use App\Http\Controllers\Games\Mining\UserGoldController;
+
+;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
+
+Route::get('/three', function () {
+    return Inertia::render('ThreeJs');
+})->name('threejs');
 
 Route::get('/get-test-users', function () {
     return view('test-users', [
@@ -37,9 +46,18 @@ Route::get('games/mining', [MiningController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('games.mining');
 
-    Route::post('/mine', [MiningController::class, 'mine']);
+Route::post('/mine', [MiningController::class, 'mine']);
+
+Route::get('/api/pickaxes', [PickaxeController::class, 'index']);
+
+
+Route::post('/api/pickaxes/equip', [PickaxeController::class, 'equip']);
+
+Route::post('/api/gold/sell-all', [UserGoldController::class, 'sellAll']);
+
 
 Route::get('ecommerce/product-search', [ProductSearchController::class, 'search']);
+
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';

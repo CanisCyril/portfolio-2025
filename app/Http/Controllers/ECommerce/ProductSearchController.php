@@ -5,8 +5,6 @@ namespace App\Http\Controllers\ECommerce;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Contracts\ProductSearchServiceInterface;
-use App\Models\Product;
-use App\Http\Requests\ECommerce\ProductSearchRequest;
 use App\Http\Resources\ECommerce\ProductSearchResource;
 
 class ProductSearchController extends Controller
@@ -29,5 +27,5 @@ class ProductSearchController extends Controller
 
         return ProductSearchResource::collection($products);
     }
-    
+
 }

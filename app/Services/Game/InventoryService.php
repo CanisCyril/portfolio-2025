@@ -7,7 +7,8 @@ use App\Models\Games\Mining\UserOre;
 
 class InventoryService implements InventoryServiceInterface
 {
-    public function addItems(int $oreID, int $amount): UserOre {
+    public function addItems(int $oreID, int $amount): UserOre
+    {
 
         $userOre = UserOre::firstOrNew([
             'user_id' => auth()->id(),

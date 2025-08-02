@@ -4,7 +4,6 @@ namespace App\Models\Games\Mining;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 class UserOre extends Model
 {
     protected $table = 'user_ores';
