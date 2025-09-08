@@ -9,9 +9,14 @@ import type { Inventory } from '@/types/inventory';
 import { Experience } from '@/types/experience';
 
 import Menu from './Components/Menu/Menu.vue';
+import ThreeJs from './ThreeJs.vue';
+
+
+// ThreeJS imports
 
 const modalRef = ref<HTMLDialogElement | null>(null);
 const selectedLevel = ref<number | null>(null);
+const threeContainer = ref(null)
 
 const props = defineProps<{ 
     wallet: any, 
@@ -158,7 +163,11 @@ function handleImageError(event: Event) {
     </div>
 
     <div class="container mx-auto flex w-full h-[660px] gap-6 p-3">
-        <div class="controls flex flex-wrap flex-col bg-stone-900 gap-6 basis-[60%] h-[40%]">
+        <div class="three-js-container">
+            <ThreeJs />
+        </div>
+
+        <!-- <div class="controls flex flex-wrap flex-col bg-stone-900 gap-6 basis-[60%] h-[40%]">
             <button
                 @click="mine"
                 class=" w-[1/4] bg-blue-500 flex-1 text-white font-semibold gap-6 rounded">
@@ -172,7 +181,7 @@ function handleImageError(event: Event) {
             class=" w-[1/4] bg-blue-500 flex-1 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
                 Menu
             </button>
-        </div>
+        </div> -->
         <div class="inventory bg-stone-900 basis-[40%] p-2 h-full">
             <div class="ore-container">
                 <ul class="gap-6">

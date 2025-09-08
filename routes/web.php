@@ -8,16 +8,22 @@ use App\Http\Controllers\Games\Mining\MiningController;
 use App\Http\Controllers\Games\Mining\PickaxeController;
 use App\Http\Controllers\Games\Mining\UserGoldController;
 
-;
-
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
 
 Route::get('/three', function () {
-    return Inertia::render('ThreeJs');
+    return Inertia::render('Games/ThreeJs');
 })->name('threejs');
+
+Route::get('/new', function () {
+    return Inertia::render('Games/New');
+})->name('new');
+
+Route::get('/third', function () {
+    return Inertia::render('Games/Third');
+})->name('third');
 
 Route::get('/get-test-users', function () {
     return view('test-users', [
