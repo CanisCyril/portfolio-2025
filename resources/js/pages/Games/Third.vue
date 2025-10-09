@@ -14,7 +14,7 @@ import { Vector2, Raycaster } from 'three'
 import Stats from 'stats.js'
 
 import { createCharacter } from '@/utils/mining-game/character'
-import { createMap } from '@/utils/mining-game/mapBuilder'
+import { createMap } from '@/utils/mining-game/newMapBuilder'
 // should be lower case???
 import { CharacterController } from '@/utils/mining-game/characterController'
 import { MiningManager } from '@/utils/mining-game/miningManager'
