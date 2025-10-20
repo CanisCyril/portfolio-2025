@@ -83,7 +83,6 @@ const tickets = ref([{
 }
 ])
 
-document.documentElement.classList.toggle(  "dark",  localStorage.theme === "dark" ||    (!("theme" in localStorage) && window.matchMedia("(prefers-color-scheme: dark)").matches),);// Whenever the user explicitly chooses light modelocalStorage.theme = "light";// Whenever the user explicitly chooses dark modelocalStorage.theme = "dark";// Whenever the user explicitly chooses to respect the OS preferencelocalStorage.removeItem("theme");
 
 function applyTheme(dark) {
     isDark.value = dark
@@ -109,8 +108,8 @@ const tabs = [
 
 const activeKey = ref('my');
 
-const activeClass = 'badge bg-gray-100 dark:bg-gray-200 text-black p-4 w-full'
-const inactiveClass = 'text-gray-600 hover:text-gray-900 p-4 dark:text-base-100 w-full'
+const activeClass = 'text-zinc-200 pb-4'
+const inactiveClass = 'text-gray-600 hover:text-gray-900 dark:hover:text-white pb-4 dark:text-zinc-400 transition-colors duration-300 ease-in-out'
 
 function onRowClick(ticket) {
     selectedTicket.value = ticket;
@@ -145,6 +144,15 @@ onMounted(() => {
     // }, 300)
 })
 
+
+const stored = localStorage.getItem('theme');
+const prefers = matchMedia('(prefers-color-scheme: dark)').matches;
+const dark = stored ? stored === 'dark' : prefers;
+const el = document.documentElement;
+el.classList.toggle('dark', dark);          // <-- you own the switch
+el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
+
+
 </script>
 
 <template>
@@ -164,17 +172,17 @@ onMounted(() => {
                     @click="toggleFilterBar" />
                 <ChevronDownIcon v-if="filterBarOpen && !isMdUp" class="size-6 cursor-pointer"
                     @click="toggleFilterBar" />
-                <ChevronLeftIcon v-if="filterBarOpen && isMdUp" class="size-8 cursor-pointer"
+                <ChevronLeftIcon v-if="filterBarOpen && isMdUp" class="size-6 cursor-pointer"
                     @click="toggleFilterBar" />
-                <ChevronRightIcon v-if="!filterBarOpen && isMdUp" class="size-8 cursor-pointer"
+                <ChevronRightIcon v-if="!filterBarOpen && isMdUp" class="size-6 cursor-pointer"
                     @click="toggleFilterBar" />
                 <div class="tooltip md:tooltip-right md:mt-4" data-tip="Create Ticket" aria-label="Create Ticket">
                     <Link :href="route('helpdesk.create')">
-                        <PlusCircleIcon class="size-8 cursor-pointer  hover:text-green-600" />
+                    <PlusCircleIcon class="size-6 cursor-pointer  hover:text-green-600" />
                     </Link>
                 </div>
                 <div class="tooltip md:tooltip-right" data-tip="View Reports" aria-label="View Reports">
-                    <ChartPieIcon class="size-8 cursor-pointer" />
+                    <ChartPieIcon class="size-6 cursor-pointer" />
                 </div>
 
 
@@ -204,18 +212,18 @@ onMounted(() => {
                 </div> -->
             </div>
         </nav>
-        <div id="filters" class="flex flex-col items-center
+        <div id="filters" class="flex flex-col
          transition-[max-height,padding] md:transition-[flex-basis,padding,border-width]
          duration-500 ease-in-out
          md:min-h-dvh md:min-w-0 dark:bg-zinc-800 md:dark:border-r-1 md:dark:border-zinc-700" :class="filterBarOpen
             ? 'max-h-[80svh] p-4 md:basis-1/5 md:border-r'
             : 'max-h-0 p-0 md:basis-0 md:border-0'">
-
             <div class="w-full flex flex-col md:min-w-0 [contain:paint] dark:text-black
-           transition-[opacity,filter] duration-300" :class="filterBarOpen
-            ? 'opacity-100 blur-0 delay-[500ms] pointer-events-auto'
-            : 'opacity-0 blur-sm delay-0 pointer-events-none'" :aria-hidden="!filterBarOpen">
-                <div class="p-1 mt-3">
+                transition-[opacity,filter] duration-300" :class="filterBarOpen
+                    ? 'opacity-100 blur-0 delay-[500ms] pointer-events-auto'
+                    : 'opacity-0 blur-sm delay-0 pointer-events-none'" :aria-hidden="!filterBarOpen">
+                <h1 class="font-bold leading-tight text-zinc-500 mt-4">Helpdesk</h1>
+                <div v-if="!isMdUp" class="p-1 mt-3">
                     <label class="input border-1 w-full">
                         <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
@@ -231,10 +239,13 @@ onMounted(() => {
                 <div class="overflow-x-scroll max-w-[96dvw] mt-4">
                     <!-- Add aninmation -->
                     <ul
-                        class="flex flex-row md:flex-col gap-8 whitespace-nowrap [&>li]:min-w-fit [&>li:hover]:cursor-pointer [&>li:hover]:text-gray-500">
+                        class="flex flex-row md:flex-col gap-4 whitespace-nowrap [&>li]:min-w-fit [&>li:hover]:cursor-pointer">
                         <li v-for="tab in tabs" :key="tab.key"
                             :class="activeKey === tab.key ? activeClass : inactiveClass" @click="activeKey = tab.key">
-                            {{ tab.label }}
+                            <div class="flex flex-row items-center gap-2 px-2 py-3 rounded-lg transition-colors  ease-in" :class="activeKey === tab.key ? 'bg-zinc-700 dark:bg-neutral-900 duration-300' : 'duration-0'">
+                                <span class="badge badge-neutral px-3 py-2">1</span>
+                                <p>{{ tab.label }}</p>
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -265,7 +276,20 @@ onMounted(() => {
 
         <!-- Other screens ticket -->
 
-        <div v-if="isMdUp" id="table" class="hidden flex-1 md:min-h-dvh md:flex flex-col ">
+        <div v-if="isMdUp" id="table" class="hidden flex-1 md:min-h-dvh md:flex flex-col p-4 mx-auto">
+            <!-- <h1 class="mt-2 text-xl font-bold leading-text">Tickets</h1> -->
+            <div class="p-1 mt-3 max-w-xs dark:text-zinc-800">
+                <label class="input border-1 w-full">
+                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
+                            stroke="currentColor">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </g>
+                    </svg>
+                    <input type="search" placeholder="Search tickets" class="placeholder:italic " />
+                </label>
+            </div>
             <table class="table flex-1 border-b-1 dark:text-white">
                 <!-- head -->
                 <thead>

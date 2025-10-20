@@ -155,10 +155,10 @@ onMounted(() => {
             fadeIn animate-[fadeBlurIn_0.6s_ease-out_forwards] [animation-delay:1.5s] snap-start" id="projects">
             <ProjectCard title="Helpdesk" description="This is a brief description of the project."
                 preview="https://www.shutterstock.com/image-vector/image-coming-soon-no-picture-600nw-2450891047.jpg"
-                :tags="['Vue', 'Laravel', 'Tailwind']" link="helpdesk">
+                :tags="['Vue', 'Laravel', 'Tailwind']" link="#">
             </ProjectCard>
 
-            <!-- <ProjectCard title="API Development" description="This is a brief description of the project."
+            <ProjectCard title="API Development" description="This is a brief description of the project."
                 preview="https://www.shutterstock.com/image-vector/image-coming-soon-no-picture-600nw-2450891047.jpg"
                 :tags="['Vue', 'Laravel', 'Tailwind']" link="#">
             </ProjectCard>
@@ -166,7 +166,7 @@ onMounted(() => {
             <ProjectCard title="Mining Game" description="This is a brief description of the project."
                 preview="https://www.shutterstock.com/image-vector/image-coming-soon-no-picture-600nw-2450891047.jpg"
                 :tags="['Vue', 'Laravel', 'Tailwind']" link="#">
-            </ProjectCard> -->
+            </ProjectCard>
         </div>
 
         <div id="experience" class="snap-start">

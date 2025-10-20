@@ -23,12 +23,12 @@ const props = defineProps<{
                 <span v-for="(tag, index) in tags" :key="index" class="badge bg-gray-200 p-4">{{ tag }}</span>
             </div>
 
-            <Link :href="route(props.link)">
+            <!-- <Link :href="route(props.link)"> -->
                 <button class="btn btn-neutral w-20">
                 <!-- add link icon -->
                     Live
                 </button>
-            </Link>
+            <!-- </Link> -->
         </div>
     </div>
 </template>
