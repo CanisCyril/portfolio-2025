@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Services\Payments;
+
 use App\Contracts\PaymentServiceInterface;
 use Stripe\Stripe;
 use Stripe\Charge;

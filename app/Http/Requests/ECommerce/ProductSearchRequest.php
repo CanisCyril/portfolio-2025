@@ -11,7 +11,7 @@ class ProductSearchRequest extends FormRequest
      */
     public function authorize(): bool
     {
-       return true;
+        return true;
     }
 
     /**
@@ -21,8 +21,8 @@ class ProductSearchRequest extends FormRequest
      */
     public function rules(): array
     {
-         return [
-            'q' => 'nullable|string|max:255',
+        return [
+           'q' => 'nullable|string|max:255',
         ];
     }
 }

@@ -6,9 +6,9 @@ use Haxneeraj\LaravelVirtualWallet\Traits\EnumTrait;
 
 /**
  * TransactionTypeEnum represents various types of transactions within the application, such as Deposit, Withdraw, Bonus, Credit, etc.
- * 
+ *
  * This enum uses the EnumTrait to provide additional functionality for interacting with enum values, including validation methods.
- * 
+ *
  * @author Neeraj Saini
  * @email hax-neeraj@outlook.com
  * @github https://github.com/haxneeraj/
@@ -43,4 +43,3 @@ enum TransactionTypeEnum: string
      */
     // case DEBIT = 'debit';
 }
-

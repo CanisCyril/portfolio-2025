@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
             'title' => 'required',
             'message' => 'required',
         ]);
-    
+
         return response()->json(['message' => 'Thank you for your message!']);
     });
 });

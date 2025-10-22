@@ -2,7 +2,7 @@
 
 /**
  * This configuration file defines the essential settings for the Laravel Virtual Wallet package.
- * 
+ *
  * It specifies the model classes for wallets, transactions, and crypto transactions,
  * as well as the associated database table names. Additionally, it provides a development mode
  * setting for controlling error messages and debugging information.
@@ -11,7 +11,7 @@
 return [
     /**
      * Model class mappings.
-     * 
+     *
      * Defines the model classes used by the virtual wallet package. These models can
      * be customized by specifying different model classes, allowing developers to extend
      * or modify the default behavior of the package.
@@ -26,7 +26,7 @@ return [
 
     /**
      * Database table mappings.
-     * 
+     *
      * Defines the names of the database tables used by the virtual wallet package.
      * This allows developers to customize table names as per their application’s needs.
      */
@@ -44,7 +44,7 @@ return [
      * Defines the enum classes used by the virtual wallet package. These enums can
      * be customized by specifying different enum classes, allowing developers to extend
      * or modify the default behavior of the package.
-     * 
+     *
      * @see \App\Enums\CurrencyEnum
      * @see \App\Enums\CurrencyTypeEnum
      * @see \App\Enums\TransactionMethodEnum
@@ -65,15 +65,15 @@ return [
 
     /**
      * Development mode setting.
-     * 
+     *
      * This setting controls how error messages are handled by the package.
      * There are three possible values for 'dev_mode':
-     * 
+     *
      * - **true**: Enables real-time error messages, showing specific details.
      * - **false**: Disables real-time error messages, showing general errors like "something went wrong."
      * - **dev**: Enables full debugging, displaying real-time error details along with
      *   the message, file, line number, and stack trace using `dd` (dump and die).
-     * 
+     *
      * The default is set to 'false' unless the environment variable 'HAX_DEBUG_MODE' is explicitly set.
      */
     'dev_mode' => env('HAX_DEBUG_MODE', false),

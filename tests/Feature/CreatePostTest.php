@@ -7,9 +7,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CreatePostTest extends TestCase
-
 {
-
     use RefreshDatabase;
 
     /**

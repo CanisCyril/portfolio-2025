@@ -3,10 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
 use App\Contracts\Payments\PaymentServiceInterface;
 use App\Services\Payments\StripePaymentService;
-
 use App\Contracts\ProductSearchServiceInterface;
 use App\Services\ProductSearchService;
 

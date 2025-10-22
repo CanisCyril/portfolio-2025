@@ -1,0 +1,36 @@
+2025-07-04 22:07:42,329 INFO supervisord started with pid 1
+2025-07-04 22:07:43,339 INFO spawnerr: unknown error making dispatchers for 'laravel-scheduler': EACCES
+2025-07-04 22:07:43,344 INFO spawned: 'php-fpm' with pid 7
+2025-07-04 22:07:44,433 INFO spawnerr: unknown error making dispatchers for 'laravel-scheduler': EACCES
+2025-07-04 22:07:44,434 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-07-04 22:07:46,440 INFO spawnerr: unknown error making dispatchers for 'laravel-scheduler': EACCES
+2025-07-04 22:07:49,447 INFO spawnerr: unknown error making dispatchers for 'laravel-scheduler': EACCES
+2025-07-04 22:07:49,448 INFO gave up: laravel-scheduler entered FATAL state, too many start retries too quickly
+2025-07-04 22:09:13,555 INFO supervisord started with pid 1
+2025-07-04 22:09:14,560 INFO spawnerr: unknown error making dispatchers for 'laravel-scheduler': EACCES
+2025-07-04 22:09:14,562 INFO spawned: 'php-fpm' with pid 6
+2025-07-04 22:09:15,623 INFO spawnerr: unknown error making dispatchers for 'laravel-scheduler': EACCES
+2025-07-04 22:09:15,624 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-07-04 22:09:17,630 INFO spawnerr: unknown error making dispatchers for 'laravel-scheduler': EACCES
+2025-07-04 22:09:20,642 INFO spawnerr: unknown error making dispatchers for 'laravel-scheduler': EACCES
+2025-07-04 22:09:20,643 INFO gave up: laravel-scheduler entered FATAL state, too many start retries too quickly
+2025-07-04 22:09:24,654 WARN received SIGQUIT indicating exit request
+2025-07-04 22:09:24,664 INFO waiting for php-fpm to die
+2025-07-04 22:09:24,709 INFO stopped: php-fpm (exit status 0)
+2025-07-04 22:13:18,391 INFO supervisord started with pid 1
+2025-07-04 22:13:19,400 INFO spawned: 'laravel-scheduler' with pid 7
+2025-07-04 22:13:19,402 INFO spawned: 'php-fpm' with pid 8
+2025-07-04 22:13:20,461 INFO success: laravel-scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-07-04 22:13:20,461 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-07-04 22:13:37,521 WARN received SIGQUIT indicating exit request
+2025-07-04 22:13:37,577 INFO waiting for laravel-scheduler, php-fpm to die
+2025-07-04 22:13:37,653 INFO stopped: php-fpm (exit status 0)
+2025-07-04 22:13:42,917 INFO supervisord started with pid 1
+2025-07-04 22:13:43,928 INFO spawned: 'laravel-scheduler' with pid 6
+2025-07-04 22:13:43,932 INFO spawned: 'php-fpm' with pid 8
+2025-07-04 22:13:45,163 INFO success: laravel-scheduler entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-07-04 22:13:45,164 INFO success: php-fpm entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-07-04 22:17:13,912 WARN received SIGQUIT indicating exit request
+2025-07-04 22:17:13,919 INFO waiting for laravel-scheduler, php-fpm to die
+2025-07-04 22:17:13,956 INFO stopped: php-fpm (exit status 0)
+2025-07-04 22:17:14,963 WARN stopped: laravel-scheduler (terminated by SIGTERM)

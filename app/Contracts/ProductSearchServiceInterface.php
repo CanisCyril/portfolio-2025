@@ -3,6 +3,7 @@
 namespace App\Contracts;
 
 use Illuminate\Pagination\LengthAwarePaginator;
+
 interface ProductSearchServiceInterface
 {
     /**

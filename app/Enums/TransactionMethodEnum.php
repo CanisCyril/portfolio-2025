@@ -6,10 +6,10 @@ use Haxneeraj\LaravelVirtualWallet\Traits\EnumTrait;
 
 /**
  * TransactionMethodEnum defines various methods used in transactions within the application, such as Offline, Online, Withdraw, Deposit, Automatic, Manual, and Wallet transfers.
- * 
+ *
  * This enum uses the EnumTrait to provide additional functionality, including validation methods for enum values.
  * Each case represents a specific transaction method type.
- * 
+ *
  * @author Neeraj Saini
  * @email hax-neeraj@outlook.com
  * @github https://github.com/haxneeraj/

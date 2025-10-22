@@ -6,7 +6,6 @@ use App\Contracts\PaymentServiceInterface;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-
 class StripeController extends Controller
 {
     protected PaymentServiceInterface $paymentService;

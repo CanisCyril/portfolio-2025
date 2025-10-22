@@ -10,8 +10,14 @@ services:
     container_name: laravel-app  # Friendly name for the container
     restart: unless-stopped  # Auto-restart the container unless manually stopped
     working_dir: /var/www/  # Default working directory inside the containerv
+    environment:
+      - TZ=Europe/London
+      # Sets the timezone environment variable inside the container.
+      # This tells Linux programs (like `date`, PHP, cron, etc.) to use London time.
+
     volumes:
       - ./:/var/www  # Mount current project directory into the container
+      - ./storage/app/public:/var/www/storage/app/public      
     networks:
       - laravel  # Attach this container to the "laravel" network
 
