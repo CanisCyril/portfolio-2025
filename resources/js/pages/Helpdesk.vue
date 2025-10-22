@@ -149,9 +149,15 @@ const stored = localStorage.getItem('theme');
 const prefers = matchMedia('(prefers-color-scheme: dark)').matches;
 const dark = stored ? stored === 'dark' : prefers;
 const el = document.documentElement;
-el.classList.toggle('dark', dark);          // <-- you own the switch
-el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
+el.classList.toggle('dark', dark);
+el.style.colorScheme = dark ? 'dark' : 'light';
 
+if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.classList.add('dark');
+    document.documentElement.style.colorScheme = 'dark';
+    isDark.value = true
+
+}
 
 </script>
 
@@ -166,7 +172,7 @@ el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
         <!-- Needs to be 1fixed height while scrolling -->
         <nav id="nav"
             class="flex md:flex-col items-center justify-between p-4 w-full min-h-[48px] md:min-h-dvh md:w-auto 
-            border-b-2 md:border-b-0 md:border-r-2 text-black bg-base-100  dark:bg-zinc-900 dark:text-white theme-color-smooth">
+            border-b-2 md:border-b-0 md:border-r-2 text-black bg-zinc-50  dark:bg-zinc-900 dark:text-white theme-color-smooth">
             <div class="flex flex-row md:flex-col gap-4 md:mt-4">
                 <ChevronUpIcon v-if="!filterBarOpen && !isMdUp" class="size-6 cursor-pointer"
                     @click="toggleFilterBar" />
@@ -215,16 +221,16 @@ el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
         <div id="filters" class="flex flex-col
          transition-[max-height,padding] md:transition-[flex-basis,padding,border-width]
          duration-500 ease-in-out
-         md:min-h-dvh md:min-w-0 dark:bg-zinc-800 md:dark:border-r-1 md:dark:border-zinc-700" :class="filterBarOpen
-            ? 'max-h-[80svh] p-4 md:basis-1/5 md:border-r'
+         md:min-h-dvh md:min-w-0 dark:bg-zinc-800" :class="filterBarOpen
+            ? 'max-h-[80svh] p-4 w-full md:basis-1/5 md:border-r'
             : 'max-h-0 p-0 md:basis-0 md:border-0'">
-            <div class="w-full flex flex-col md:min-w-0 [contain:paint] dark:text-black
+            <div class="w-full flex flex-col md:min-w-0 [contain:paint] dark:text-white
                 transition-[opacity,filter] duration-300" :class="filterBarOpen
                     ? 'opacity-100 blur-0 delay-[500ms] pointer-events-auto'
                     : 'opacity-0 blur-sm delay-0 pointer-events-none'" :aria-hidden="!filterBarOpen">
                 <h1 class="font-bold leading-tight text-zinc-500 mt-4">Helpdesk</h1>
                 <div v-if="!isMdUp" class="p-1 mt-3">
-                    <label class="input border-1 w-full">
+                    <label class="input border-1 w-full border-zinc-400 bg-zinc-50 dark:bg-zinc-800">
                         <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                             <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
                                 stroke="currentColor">
@@ -243,7 +249,7 @@ el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
                         <li v-for="tab in tabs" :key="tab.key"
                             :class="activeKey === tab.key ? activeClass : inactiveClass" @click="activeKey = tab.key">
                             <div class="flex flex-row items-center gap-2 px-2 py-3 rounded-lg transition-colors  ease-in" :class="activeKey === tab.key ? 'bg-zinc-700 dark:bg-neutral-900 duration-300' : 'duration-0'">
-                                <span class="badge badge-neutral px-3 py-2">1</span>
+                                <span class="badge px-3 py-2 bg-zinc-200 dark:bg-zinc-600 text-black dark:text-white" :class="activeKey === tab.key ? '' : ''">1</span>
                                 <p>{{ tab.label }}</p>
                             </div>
                         </li>
@@ -256,7 +262,7 @@ el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
         <!-- Small Screen Tickets -->
 
         <div v-if="!isMdUp" v-for="ticket in tickets" :key="ticket.id"
-            class="md:hidden card w-[80%] mx-8 bg-base-100 card-sm shadow-sm m-4">
+            class="md:hidden card w-[80%] mx-8 bg-gray-100 dark:bg-zinc-800 card-sm shadow-sm m-4">
             <div class="card-body">
                 <p class="text-sm">{{ ticket.ticket }}</p>
 
@@ -269,7 +275,7 @@ el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
                 </div>
                 <div class="flex justify-between w-full">
                     <p>{{ ticket.name }}</p>
-                    <p class="text-xsm ml-auto text-right whitespace-nowrap">{{ ticket.due }}</p>
+                    <p class="text-xsm ml-auto pr-2 text-right whitespace-nowrap">{{ ticket.due }}</p>
                 </div>
             </div>
         </div>
@@ -278,8 +284,8 @@ el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
 
         <div v-if="isMdUp" id="table" class="hidden flex-1 md:min-h-dvh md:flex flex-col p-4 mx-auto">
             <!-- <h1 class="mt-2 text-xl font-bold leading-text">Tickets</h1> -->
-            <div class="p-1 mt-3 max-w-xs dark:text-zinc-800">
-                <label class="input border-1 w-full">
+            <div class="p-1 mt-3 max-w-xs">
+                <label class="input border-1 w-full border-zinc-400 bg-zinc-50 dark:bg-zinc-800">
                     <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <g stroke-linejoin="round" stroke-linecap="round" stroke-width="2.5" fill="none"
                             stroke="currentColor">
@@ -287,8 +293,9 @@ el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
                             <path d="m21 21-4.3-4.3"></path>
                         </g>
                     </svg>
-                    <input type="search" placeholder="Search tickets" class="placeholder:italic " />
+                    <input type="search" placeholder="Search tickets" class="placeholder:italic" />
                 </label>
+                <p class="text-zinc-500 p-2 text-sm">Add active tab here maybee</p>
             </div>
             <table class="table flex-1 border-b-1 dark:text-white">
                 <!-- head -->
@@ -303,7 +310,7 @@ el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
                 </thead>
                 <tbody class="border-1">
                     <tr v-for="ticket in tickets" :key="ticket.id"
-                        class="dark:even:bg-zinc-900 dark:odd:bg-zinc-800 dark:hover:bg-slate-600 cursor-pointer"
+                        class="dark:even:bg-zinc-900 dark:odd:bg-zinc-800 dark:hover:bg-zinc-700 hover:bg-zinc-300 cursor-pointer transition-colors duration-600 ease-in-out"
                         @click="onRowClick(ticket)">
                         <th>{{ ticket.ticket }}</th>
                         <td>{{ ticket.subject }}</td>
@@ -327,5 +334,3 @@ el.style.colorScheme = dark ? 'dark' : 'light'; // see #2
     </main>
 
 </template>
-
-<style></style>
