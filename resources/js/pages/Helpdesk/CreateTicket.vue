@@ -49,56 +49,58 @@ onMounted(() => {
         <title>Helpdesk - Create Ticket</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </Head>
-
-    <main class="container mx-auto max-w-4xl">
-        <div class="card card-lg shadow-sm mt-8">
-            <div class="card-body p-0">
-                <div class="flex flex-row items-center border-b-1 ">
-                    <TicketIcon class="size-8 ml-4" />
-                    <h2 class="card-title p-4 mb-1">Create Ticket</h2>
-                </div>
-                <div class="flex flex-col gap-8 p-4">
-                    <fieldset class="fieldset">
-                        <legend class="fieldset-legend">Title</legend>
-                        <input v-model="form.title" type="text" class="input border-1 w-full" placeholder="Type here" />
-                    </fieldset>
-                    <fieldset class="fieldset">
-                        <legend class="fieldset-legend">Description</legend>
-                        <textarea v-model="form.description" class="textarea border-1 h-42 w-full"
-                            placeholder="Describe the issue"></textarea>
-                    </fieldset>
-                    <div class="flex md:flex-row flex-col gap-4 w-full">
-                        <fieldset class="fieldset w-full">
-                            <legend class="fieldset-legend">Category</legend>
-                            <select v-model="form.category_id" class="select border-1 w-full">
-                                <option disabled selected>Category</option>
-                                <option v-for="category in categories" :key="category.id" :value="category.id">
-                                    {{ category.name }}
-                                </option>
-                            </select>
-                        </fieldset>
-                        <fieldset class="fieldset w-full">
-                            <legend class="fieldset-legend">Priority</legend>
-                            <select v-model="form.priority_id" class="select border-1 w-full">
-                                <option disabled selected>Priority</option>
-                                <option v-for="priority in priorities" :key="priority.id" :value="priority.id">
-                                    {{ priority.name }}
-                                </option>
-                            </select>
-                        </fieldset>
+    <div class="min-h-screen bg-neutral-200 dark:bg-zinc-900">
+        <main class="pt-8 mx-auto max-w-4xl">
+            <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm">
+                <div class="card-body p-0">
+                    <div class="flex flex-row items-center border-b-1 ">
+                        <TicketIcon class="size-8 ml-4" />
+                        <h2 class="card-title p-4 mb-1">Create Ticket</h2>
                     </div>
-                    <fieldset class="fieldset">
-                        <legend class="fieldset-legend">Pick a file</legend>
-                        <input @change="form.attachment = $event.target.files?.[0] ?? null" type="file"
-                            class="file-input" />
-                        <label class="label p-1">Optional</label>
-                        <label class="label">Max size 2MB</label>
-                    </fieldset>
-                    <div class="card-actions justify-end">
-                        <button class="btn btn-neutral mt-6" @click="submit">Submit Ticket</button>
+                    <div class="flex flex-col gap-8 p-4">
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend">Title</legend>
+                            <input v-model="form.title" type="text" class="input focus:outline-none focus:border-2 focus:border-sky-900 dark:bg-zinc-800 border-1 w-full"
+                                placeholder="Type here" />
+                        </fieldset>
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend">Description</legend>
+                            <textarea v-model="form.description" class="textarea focus:outline-none focus:border-2 focus:border-sky-900 dark:bg-zinc-800 border-1 h-42 w-full"
+                                placeholder="Describe the issue"></textarea>
+                        </fieldset>
+                        <div class="flex md:flex-row flex-col gap-4 w-full">
+                            <fieldset class="fieldset w-full">
+                                <legend class="fieldset-legend">Category</legend>
+                                <select v-model="form.category_id" class="select focus:outline-none focus:border-2 focus:border-sky-900 dark:bg-zinc-800 border-1 w-full">
+                                    <option disabled selected>Category</option>
+                                    <option v-for="category in categories" :key="category.id" :value="category.id">
+                                        {{ category.name }}
+                                    </option>
+                                </select>
+                            </fieldset>
+                            <fieldset class="fieldset w-full">
+                                <legend class="fieldset-legend">Priority</legend>
+                                <select v-model="form.priority_id" class="select focus:outline-none focus:border-2 focus:border-sky-900 dark:bg-zinc-800 border-1 w-full">
+                                    <option disabled selected>Priority</option>
+                                    <option v-for="priority in priorities" :key="priority.id" :value="priority.id">
+                                        {{ priority.name }}
+                                    </option>
+                                </select>
+                            </fieldset>
+                        </div>
+                        <fieldset class="fieldset">
+                            <legend class="fieldset-legend">Pick a file</legend>
+                            <input @change="form.attachment = $event.target.files?.[0] ?? null" type="file"
+                                class="file-input" />
+                            <label class="label p-1">Optional</label>
+                            <label class="label">Max size 2MB</label>
+                        </fieldset>
+                        <div class="card-actions justify-end">
+                            <button class="btn btn-neutral mt-6" @click="submit">Submit Ticket</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 </template>
