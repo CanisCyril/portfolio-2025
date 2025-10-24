@@ -184,11 +184,13 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     @click="toggleFilterBar" />
                 <div class="tooltip md:tooltip-right md:mt-4" data-tip="Create Ticket" aria-label="Create Ticket">
                     <Link :href="route('helpdesk.create')">
-                    <PlusCircleIcon class="size-6 cursor-pointer  hover:text-green-600" />
+                        <PlusCircleIcon class="size-6 cursor-pointer  hover:text-green-600" />
                     </Link>
                 </div>
                 <div class="tooltip md:tooltip-right" data-tip="View Reports" aria-label="View Reports">
-                    <ChartPieIcon class="size-6 cursor-pointer" />
+                    <Link :href="route('helpdesk.report')">
+                        <ChartPieIcon class="size-6 cursor-pointer" />
+                    </Link>
                 </div>
 
 

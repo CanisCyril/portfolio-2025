@@ -24,7 +24,7 @@ services:
   db:  # MySQL database container
     image: mysql:latest  # Use official MySQL latest image
     ports:
-      - "3306:3306"
+      - "3307:3306"
     container_name: laravel-mysql  # Friendly name for the container
     restart: unless-stopped  # Auto-restart unless manually stopped
     environment:  # Environment variables for MySQL setup

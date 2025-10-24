@@ -11,6 +11,7 @@ use App\Http\Controllers\Helpdesk\TicketController;
 
 // Helpdesk
 use App\Http\Controllers\Helpdesk\DashboardController;
+use App\Http\Controllers\Helpdesk\ReportController;
 
 // * Helpdesk Routes * //
 
@@ -22,7 +23,8 @@ Route::get('/helpdesk/create-ticket', function () {
     return Inertia::render('Helpdesk/CreateTicket');
 })->name('helpdesk.create');
 
-
+Route::get('/helpdesk/reports', [ReportController::class, 'index'])
+    ->name('helpdesk.report');
 
 Route::post('/helpdesk/store-ticket', [TicketController::class, 'store'])
     ->name('helpdesk.tickets.store');
