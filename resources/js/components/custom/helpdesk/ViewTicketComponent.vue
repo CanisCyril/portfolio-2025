@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
-import { ref, onMounted } from 'vue'
+import { Head, router, usePage } from '@inertiajs/vue3';
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -15,8 +16,6 @@ import {
 // import statusColor from '../../utils/helpdesk/statusColor'
 import { statusColor } from '@/utils/helpdesk/statusColor'
 import { priorityColor } from '@/utils/helpdesk/priorityColor'
-
-
 
 const priorities = ref([
     { id: 1, name: 'Low' },
@@ -33,6 +32,8 @@ const categories = ref([
     { id: 4, name: 'Other' },
 ]);
 
+const assignes = ref([]);
+
 // ADD PROPER TYPES
 
 const props = defineProps<{
@@ -44,9 +45,22 @@ const props = defineProps<{
 const emit = defineEmits(['close'])
 
 const goBack: () => void = () => emit('close')
-const getAssignableUsers = () => {
-router.get('')
-}
+
+const getAssignes = () => axios.get(route('helpdesk.assignes'))
+    .then(({ data }) => {
+        assignes.value = data.data
+
+        console.log('asss', assignes)
+    })
+    .catch(err => {
+        console.error(err)
+    })
+
+
+onMounted(() => {
+    getAssignes()
+
+})
 
 </script>
 
@@ -170,32 +184,7 @@ router.get('')
                             </div>
                         </div>
                     </div>
-                    <!-- PICK UP TICKET -->
-                    <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
-                        <div class="card-body">
-                            <h1 class="text-xl font-bold leading-tight">Admin Options</h1>
-                            <fieldset class="fieldset">
-                                <legend class="fieldset-legend">Select Assigne</legend>
-                                <select class="select w-full">
-                                    <option disabled selected>Assign</option>
-                                    <option>Chrome</option>
-                                    <option>FireFox</option>
-                                    <option>Safari</option>
-                                </select>
-                            </fieldset>
-                            <fieldset class="fieldset">
-                                <legend class="fieldset-legend">Update Status</legend>
-                                <select class="select capitalize w-full">
-                                    <option disabled selected>{{ ticket.status }}</option>
-                                    <option>Chrome</option>
-                                    <option>FireFox</option>
-                                    <option>Safari</option>
-                                </select>
-                            </fieldset>
-                        </div>
-                    </div>
-                    <!-- ADD V IF ASSIGNED -->
-                    <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
+                    <div v-if="ticket.assigned_to_id" class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Assigned to</h1>
                             <div class="flex flex-row items-center gap-4 mt-4">
@@ -209,6 +198,29 @@ router.get('')
                                     <p class="text-sm text-zinc-500">Software Engineer</p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
+                        <div class="card-body">
+                            <h1 class="text-xl font-bold leading-tight">Admin Options</h1>
+                            <fieldset class="fieldset">
+                                <legend class="fieldset-legend">Select Assigne</legend>
+                                <select class="select w-full">
+                                    <option disabled selected>Select User</option>
+                                    {{ assignes }}
+                                    <option v-for="assigne in assignes" :key="assigne.id" :value="assigne.id">
+                                        {{ assigne.name }}</option>
+                                </select>
+                            </fieldset>
+                            <fieldset class="fieldset">
+                                <legend class="fieldset-legend">Update Status</legend>
+                                <select class="select capitalize w-full">
+                                    <option disabled selected>{{ ticket.status }}</option>
+                                    <option>Chrome</option>
+                                    <option>FireFox</option>
+                                    <option>Safari</option>
+                                </select>
+                            </fieldset>
                         </div>
                     </div>
                     <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">

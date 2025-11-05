@@ -13,8 +13,13 @@ use App\Http\Controllers\Helpdesk\TicketController;
 use App\Http\Controllers\Helpdesk\DemoAuthController;
 use App\Http\Controllers\Helpdesk\DashboardController;
 use App\Http\Controllers\Helpdesk\ReportController;
+use App\Http\Controllers\Helpdesk\UserController as assigneController;
+
 
 // * Helpdesk Routes * //
+
+Route::get('api/assigne-list', [assigneController::class, 'assignes'])
+    ->name('helpdesk.assignes');
 
 Route::get('/helpdesk/demo-login', [DemoAuthController::class, 'index'])
     ->name('helpdesk.demo.index');
