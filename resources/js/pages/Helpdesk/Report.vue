@@ -1,24 +1,39 @@
 <script setup lang="ts">
 // import { Head, useForm } from '@inertiajs/vue3';
-import { onMounted } from 'vue'
 import ApexChart from 'vue3-apexcharts'
+import { ref, watch } from 'vue'
+import { usePreferredDark } from '@vueuse/core'
 
 import {
     ShieldExclamationIcon, CheckCircleIcon, ArrowTrendingUpIcon, BellAlertIcon
 } from '@heroicons/vue/24/outline'
 
+// const mode = useColorMode()        // persists to localStorage by default <-- look in to this more
 
-onMounted(() => {
+const isDark = usePreferredDark()
+const areaRef = ref(null)
+const pieRef = ref(null)
+const columnRef = ref(null)
 
-})
+watch(isDark, (dark) => {
+    areaRef.value?.updateOptions(
+        { chart: { foreColor: dark ? '#fff' : '#000' } });
+    pieRef.value?.updateOptions(
+        { chart: { foreColor: dark ? '#fff' : '#000' } })
+    columnRef.value?.updateOptions(
+        { chart: { foreColor: dark ? '#fff' : '#000' } })
+});
+
 const columnSeries = [{
     name: 'Net Profit',
     data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
-},
-];
+}];
+
 const columnOptions = {
     chart: {
         type: 'bar',
+        foreColor: isDark.value ? '#fff' : '#000000',
+
     },
     plotOptions: {
         bar: {
@@ -56,29 +71,21 @@ const columnOptions = {
     }
 };
 
-
+// Watchers
 
 const pieSeries = [44, 55, 13, 33];
 const pieOptions = {
     chart: {
         width: 380,
         type: 'donut',
+        foreColor: isDark.value ? '#fff' : '#000000',
+
     },
     dataLabels: {
         enabled: true
     },
-//       theme: {
-//       mode: 'dark', 
-//       palette: 'palette1', 
-//       monochrome: {
-//           enabled: false,
-//           color: '#255aee',
-//           shadeTo: 'dark',
-//           shadeIntensity: 0.65
-//       },
-//   },
-  
-    labels: ['John', 'Jim', 'Support', 'Dev'], // <- slice names
+
+    labels: ['John', 'Jim', 'Support', 'Dev'],
     responsive: [{
         breakpoint: 480,
         options: {
@@ -87,14 +94,16 @@ const pieOptions = {
             },
             legend: {
                 // show: false
-                 position: 'bottom',
+
+
+                position: 'bottom',
             }
         }
     }],
     legend: {
         position: 'right',
         fontSize: '16px',
-         markers: {
+        markers: {
             offsetX: -6
         }
     },
@@ -103,14 +112,15 @@ const pieOptions = {
 const areaOptions = {
     chart: {
         height: 250,
-        type: 'area'
+        type: 'area',
+        foreColor: isDark.value ? '#fff' : '#000000',
     },
     dataLabels: {
         enabled: false
     },
-     legend: {
+    legend: {
         fontSize: '16px',
-         markers: {
+        markers: {
             offsetX: -2,
         }
     },
@@ -126,7 +136,8 @@ const areaOptions = {
             format: 'dd/MM/yy HH:mm'
         },
     },
-};
+}
+
 const areaSeries = [
     { name: 'Unresolved', data: [11, 32, 45, 32, 34, 52, 41] },
     { name: 'Resolved', data: [31, 40, 28, 51, 42, 109, 100] },
@@ -215,30 +226,33 @@ const areaSeries = [
                 <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4 h-96">
                     <div class="card-body p-2 md:p-4">
                         <h6 class="text-sm text-zinc-400">Ticket Volume</h6>
-                        <ApexChart class="dark:text-zinc-600" type="area" :options="areaOptions" :series="areaSeries" height="90%"/>
+                        <ApexChart ref="areaRef" class="dark:text-zinc-600" type="area" :options="areaOptions"
+                            :series="areaSeries" height="90%" />
                     </div>
                 </div>
                 <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4  h-96">
                     <div class="card-body p-2 md:p-4">
                         <h6 class="text-sm text-zinc-400">Ticket Completed By</h6>
-                        <ApexChart type="pie" :options="pieOptions" :series="pieSeries" width="100%" height="90%" />
+                        <ApexChart ref="pieRef" type="pie" :options="pieOptions" :series="pieSeries" width="100%"
+                            height="90%" />
                     </div>
                 </div>
                 <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4 lg:col-span-2 h-96">
                     <div class="card-body p-2 md:p-4">
                         <h6 class="text-sm text-zinc-400">Ticket Completed By</h6>
-                        <ApexChart class="dark:text-zinc-600" type="bar" :options="columnOptions" :series="columnSeries" height="90%" />
+                        <ApexChart ref="columnRef" class="dark:text-zinc-600" type="bar" :options="columnOptions"
+                            :series="columnSeries" height="90%" />
                     </div>
                 </div>
                 <!-- Adds tickets by category (Top Issues) -->
-           
+
             </div>
         </main>
     </div>
 </template>
 
 <style>
-    .apexcharts-tooltip-active {
-        /* color: red; */
-    }
+.apexcharts-tooltip-active {
+    /* color: red; */
+}
 </style>

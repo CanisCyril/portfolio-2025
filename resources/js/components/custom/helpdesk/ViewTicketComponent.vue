@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, router } from '@inertiajs/vue3';
 import { ref, onMounted } from 'vue'
+
+import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 import {
     ArrowLeftIcon, ShieldCheckIcon, WifiIcon, TagIcon,
     CalendarIcon, ClockIcon, PaperClipIcon, ArrowDownTrayIcon
 } from '@heroicons/vue/24/outline'
+
+// import statusColor from '../../utils/helpdesk/statusColor'
+import { statusColor } from '@/utils/helpdesk/statusColor'
+import { priorityColor } from '@/utils/helpdesk/priorityColor'
 
 
 
@@ -24,61 +33,58 @@ const categories = ref([
     { id: 4, name: 'Other' },
 ]);
 
+// ADD PROPER TYPES
 
+const props = defineProps<{
+    ticket: any,
+    auth?: { user?: any }
 
-onMounted(() => {
+}>()
 
-})
+const emit = defineEmits(['close'])
+
+const goBack: () => void = () => emit('close')
+const getAssignableUsers = () => {
+router.get('')
+}
 
 </script>
 
 <template>
 
-    <Head>
+    <!-- <Head>
         <title>Helpdesk - View Ticket</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    </Head>
+    </Head> -->
     <div class="min-h-screen bg-neutral-200 dark:bg-zinc-900">
         <nav
-            class="flex flex-row justify-between items-center mb-4 py-2 px-4 bg-neutral-50 rounded-sm min-h-[50px] dark:bg-zinc-950">
+            class="flex flex-row justify-between items-center mb-4 py-2 px-4 bg-neutral-50 dark:bg-zinc-950 rounded-sm min-h-[50px]">
             <div class="flex flex-row items-center">
-                <span class="hover:bg-zinc-200 dark:hover:bg-zinc-700 p-1 rounded-md">
+                <span @click="goBack" class="hover:bg-zinc-200 dark:hover:bg-zinc-700 p-1 rounded-md">
                     <ArrowLeftIcon class="size-6 cursor-pointer" />
                 </span>
                 <div class="divider divider-horizontal"></div>
-                <span class="text-zinc-500">Ticket / #123</span>
-            </div>
-            <div>
-                <!-- <ul class="flex flex-row gap-4">
-                    <li>1</li>
-                    <li>2</li>
-                    <li>3</li>
-                </ul> -->
+                <span class="text-zinc-500">Ticket / #{{ ticket.id }} </span>
             </div>
         </nav>
         <main class="container mx-auto max-w-6xl text-zinc-900 dark:text-zinc-100">
             <div
                 class="md:min-h-[700px] flex flex-col-reverse md:grid md:[grid-template-columns:70%_30%] gap-4 p-4 md:mt-12">
                 <div class="flex flex-col gap-8 p-4">
-                    <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
+                    <div class="card w-96 bg-base-100 dark:bg-zinc-950 shadow-sm w-full">
                         <div class="card-body">
-                            <h1 class="text-2xl font-bold leading-tight">Issue with Internet Connectivity</h1>
-                            <p class="text-sm text-zinc-500 px-1">Created 1 day ago</p>
-                            <!-- <div class="divider"></div> -->
-                            <p class="text-md pt-4">I'm experiencing intermittent connectivity issues with my internet
-                                connection. The
-                                connection drops randomly throughout the day, making it difficult to work online. I've
-                                tried
-                                restarting my router and checking for loose cables, but the problem persists. Can
-                                someone please
-                                assist me in resolving this issue?</p>
+                            <h1 class="text-2xl font-bold leading-tight break-words whitespace-pre-line">{{
+                                ticket.title }}
+                            </h1>
+                            <p class="text-sm text-zinc-500 px-1">{{ dayjs(ticket.created_at).fromNow() }}</p>
+                            <p class="text-md pt-4 text-wrap break-words whitespace-pre-line">{{ ticket.description }}
+                            </p>
                         </div>
                     </div>
                     <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950 mb-8">
                         <div class="card-body flex gap-4">
                             <h1 class="text-xl font-bold leading-tight">Activity</h1>
                             <p class="text-sm text-zinc-500 px-1">Conversations and updates</p>
-                            <!-- <div class="divider"></div> -->
                             <div class="flex flex-col gap-4 mt-2">
                                 <div class="p-4 border rounded-lg bg-zinc-100 dark:bg-zinc-800">
                                     <div class="flex items-center gap-2 mb-2">
@@ -131,14 +137,15 @@ onMounted(() => {
                                     <ShieldCheckIcon class="size-5" />
                                     <span>Status</span>
                                 </div>
-                                <span class="badge badge-success p-1 w-full max-w-[80px]">Open</span>
+                                <span class="badge p-1 w-full max-w-[80px] capitalize"
+                                    :class="statusColor(ticket.status)">{{ ticket.status }}</span>
                             </div>
                             <div class="flex flex-row justify-between gap-4 mt-4 text-zinc-500">
                                 <div class="flex flex-row gap-1 items-center">
                                     <WifiIcon class="size-5" />
                                     <span>Priority</span>
                                 </div>
-                                <span class="badge badge-warning p-1 w-full max-w-[80px]">Med</span>
+                                <span class="badge p-1 w-full max-w-[80px]" :class="priorityColor('medium')">Med</span>
                             </div>
                             <div class="flex flex-row justify-between gap-4 mt-4 text-zinc-500">
                                 <div class="flex flex-row gap-1 items-center">
@@ -163,6 +170,31 @@ onMounted(() => {
                             </div>
                         </div>
                     </div>
+                    <!-- PICK UP TICKET -->
+                    <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
+                        <div class="card-body">
+                            <h1 class="text-xl font-bold leading-tight">Admin Options</h1>
+                            <fieldset class="fieldset">
+                                <legend class="fieldset-legend">Select Assigne</legend>
+                                <select class="select w-full">
+                                    <option disabled selected>Assign</option>
+                                    <option>Chrome</option>
+                                    <option>FireFox</option>
+                                    <option>Safari</option>
+                                </select>
+                            </fieldset>
+                            <fieldset class="fieldset">
+                                <legend class="fieldset-legend">Update Status</legend>
+                                <select class="select capitalize w-full">
+                                    <option disabled selected>{{ ticket.status }}</option>
+                                    <option>Chrome</option>
+                                    <option>FireFox</option>
+                                    <option>Safari</option>
+                                </select>
+                            </fieldset>
+                        </div>
+                    </div>
+                    <!-- ADD V IF ASSIGNED -->
                     <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Assigned to</h1>
@@ -173,7 +205,7 @@ onMounted(() => {
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <h1 class="text-md font-bold leading-tight">John Smith</h1>
+                                    <h1 class="text-md font-bold leading-tight">{{ props.auth?.user.name }}</h1>
                                     <p class="text-sm text-zinc-500">Software Engineer</p>
                                 </div>
                             </div>
@@ -183,7 +215,6 @@ onMounted(() => {
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Attachments</h1>
                             <div class="flex flex-row justify-between items-center border gap-4 mt-4 p-4 rounded-lg">
-                                <!-- <span>icon</span> -->
                                 <div class="flex flex-row items-center gap-2">
                                     <PaperClipIcon class="size-5" />
                                     <div class="flex flex-col">
@@ -194,7 +225,6 @@ onMounted(() => {
                                 <span class="hover:bg-zinc-200 hover:dark:bg-zinc-800 p-2 rounded-md cursor-pointer">
                                     <ArrowDownTrayIcon class="size-5" />
                                 </span>
-                                <!-- <span class="text-sm cursor-pointer badge badge-neutral p-2">Download</span> -->
                             </div>
                         </div>
                     </div>

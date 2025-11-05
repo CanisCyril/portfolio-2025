@@ -4,7 +4,7 @@ namespace App\Http\Requests\Helpdesk;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TicketRequest extends FormRequest
+class TicketStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,9 @@ class TicketRequest extends FormRequest
     {
         return [
             'title' => 'required|string|max:255',
-            // 'description' => 'required|string',
-            // 'category_id' => 'required|integer|exists:ticket_categories,id',
+            'description' => 'required|string|max:2000',
+            'category_id' => 'required|integer',
+            'priority_id' => 'required|integer',
             // 'priority' => 'required|integer|exists:ticket_priorities,id',
         ];
     }

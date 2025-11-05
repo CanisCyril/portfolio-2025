@@ -10,12 +10,19 @@ use App\Http\Controllers\Games\Mining\UserGoldController;
 use App\Http\Controllers\Helpdesk\TicketController;
 
 // Helpdesk
+use App\Http\Controllers\Helpdesk\DemoAuthController;
 use App\Http\Controllers\Helpdesk\DashboardController;
 use App\Http\Controllers\Helpdesk\ReportController;
 
 // * Helpdesk Routes * //
 
-Route::get('/helpdesk', [DashboardController::class, 'index'])
+Route::get('/helpdesk/demo-login', [DemoAuthController::class, 'index'])
+    ->name('helpdesk.demo.index');
+
+Route::post('/helpdesk/demo/auth', [DemoAuthController::class, 'auth'])
+    ->name('helpdesk.demo.auth');
+
+Route::middleware(['auth'])->get('/helpdesk', [DashboardController::class, 'index'])
     ->name('helpdesk');
 
 
@@ -29,8 +36,11 @@ Route::get('/helpdesk/reports', [ReportController::class, 'index'])
 Route::post('/helpdesk/store-ticket', [TicketController::class, 'store'])
     ->name('helpdesk.tickets.store');
 
-Route::get('/helpdesk/tickets', [TicketController::class, 'show'])
-->name('helpdesk.tickets.show');
+Route::post('/helpdesk/active-tab', [TicketController::class, 'activeTab'])
+    ->name('helpdesk.tickets.activeTab');
+
+Route::get('/helpdesk/ticket/{ticket}', [TicketController::class, 'show'])
+    ->name('helpdesk.ticket.show');
 
 // * General Routes * //
 
@@ -90,5 +100,5 @@ Route::post('/api/gold/sell-all', [UserGoldController::class, 'sellAll']);
 Route::get('ecommerce/product-search', [ProductSearchController::class, 'search']);
 
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

@@ -12,6 +12,7 @@ use App\Models\Games\Mining\UserPickaxe;
 use App\Models\Games\Mining\UserOre;
 use App\Models\Games\Mining\UserMiningLevel;
 use App\Models\Games\Mining\UserGold;
+use App\Models\Helpdesk\Priority;
 
 class User extends Authenticatable implements WalletInterface
 {
@@ -54,6 +55,11 @@ class User extends Authenticatable implements WalletInterface
         ];
     }
 
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
     // public function wallets() {
 
     //   return $this->hasMany(Wallet::class);
@@ -81,4 +87,6 @@ class User extends Authenticatable implements WalletInterface
     {
         return $this->hasOne(UserGold::class, 'user_id');
     }
+
+
 }
