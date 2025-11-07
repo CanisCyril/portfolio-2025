@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, router, usePage } from '@inertiajs/vue3';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 
 import dayjs from 'dayjs'
@@ -16,6 +16,13 @@ import {
 // import statusColor from '../../utils/helpdesk/statusColor'
 import { statusColor } from '@/utils/helpdesk/statusColor'
 import { priorityColor } from '@/utils/helpdesk/priorityColor'
+
+// Components
+
+import ViewTicket from '@/components/custom/ConfirmationAlertComponent.vue'
+import ConfirmationAlertComponent from '@/components/custom/ConfirmationAlertComponent.vue';
+
+const modalRef = ref<InstanceType<typeof ConfirmationAlertComponent> | null>(null)
 
 const priorities = ref([
     { id: 1, name: 'Low' },
@@ -33,6 +40,7 @@ const categories = ref([
 ]);
 
 const assignes = ref([]);
+const selectedAssigne = ref(null);
 
 // ADD PROPER TYPES
 
@@ -56,11 +64,22 @@ const getAssignes = () => axios.get(route('helpdesk.assignes'))
         console.error(err)
     })
 
-
 onMounted(() => {
     getAssignes()
 
 })
+
+function openModal() {
+  modalRef.value?.openModal()
+}
+
+const open = ref(false)
+const onSelectChange = (e) => {
+    modalRef.value?.openModal()
+  // open modal only when the user picks "open"
+  console.log('event', e.target.value)
+  open.value = e.target.value === 'open'
+}
 
 </script>
 
@@ -205,8 +224,8 @@ onMounted(() => {
                             <h1 class="text-xl font-bold leading-tight">Admin Options</h1>
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Select Assigne</legend>
-                                <select class="select w-full">
-                                    <option disabled selected>Select User</option>
+                                <select v-model="selectedAssigne" @change="onSelectChange" class="select w-full">
+                                    <option disabled selected :value="null">Select User</option>
                                     {{ assignes }}
                                     <option v-for="assigne in assignes" :key="assigne.id" :value="assigne.id">
                                         {{ assigne.name }}</option>
@@ -214,7 +233,7 @@ onMounted(() => {
                             </fieldset>
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Update Status</legend>
-                                <select class="select capitalize w-full">
+                                <select @change="onSelectChange" class="select capitalize w-full">
                                     <option disabled selected>{{ ticket.status }}</option>
                                     <option>Chrome</option>
                                     <option>FireFox</option>
@@ -244,4 +263,5 @@ onMounted(() => {
             </div>
         </main>
     </div>
+    <ConfirmationAlertComponent v-model:open="open" ref="modalRef" :message="'Are you sure you want to update?'" />
 </template>
