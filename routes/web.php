@@ -13,13 +13,15 @@ use App\Http\Controllers\Helpdesk\TicketController;
 use App\Http\Controllers\Helpdesk\DemoAuthController;
 use App\Http\Controllers\Helpdesk\DashboardController;
 use App\Http\Controllers\Helpdesk\ReportController;
-use App\Http\Controllers\Helpdesk\UserController as assigneController;
+use App\Http\Controllers\Helpdesk\UserController as assigneeController;
+use App\Http\Controllers\Helpdesk\UpdateAssigneeController;
+use App\Http\Controllers\Helpdesk\TicketCommentController;
 
 
 // * Helpdesk Routes * //
 
-Route::get('api/assigne-list', [assigneController::class, 'assignes'])
-    ->name('helpdesk.assignes');
+Route::get('api/assignee-list', [assigneeController::class, 'assignees'])
+    ->name('helpdesk.assignees');
 
 Route::get('/helpdesk/demo-login', [DemoAuthController::class, 'index'])
     ->name('helpdesk.demo.index');
@@ -46,6 +48,15 @@ Route::post('/helpdesk/active-tab', [TicketController::class, 'activeTab'])
 
 Route::get('/helpdesk/ticket/{ticket}', [TicketController::class, 'show'])
     ->name('helpdesk.ticket.show');
+
+Route::patch('/helpdesk/ticket/assignee/{ticket}', UpdateAssigneeController::class)
+    ->name('helpdesk.ticket.update.assignee');
+
+// Route::post('/helpdesk/ticket/assignee/{ticket}', UpdateAssigneeController::class)
+//     ->name('helpdesk.ticket.update.assignee');
+
+Route::post('/helpdesk/ticket/store/comment', [TicketCommentController::class, 'store'])
+    ->name('helpdesk.ticket.store.comment');
 
 // * General Routes * //
 

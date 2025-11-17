@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { Head, router, usePage } from '@inertiajs/vue3';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
-
+import Swal from 'sweetalert2'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
+import { toast } from 'vue3-toastify';
 
 dayjs.extend(relativeTime)
 
@@ -13,16 +14,16 @@ import {
     CalendarIcon, ClockIcon, PaperClipIcon, ArrowDownTrayIcon
 } from '@heroicons/vue/24/outline'
 
-// import statusColor from '../../utils/helpdesk/statusColor'
 import { statusColor } from '@/utils/helpdesk/statusColor'
 import { priorityColor } from '@/utils/helpdesk/priorityColor'
+import { ArrowBigDownDashIcon } from 'lucide-vue-next';
+
+
+const swalTheme = document.documentElement.classList.contains('dark')
+    ? 'dark'   // requires the dark theme css to be imported
+    : 'auto';
 
 // Components
-
-import ViewTicket from '@/components/custom/ConfirmationAlertComponent.vue'
-import ConfirmationAlertComponent from '@/components/custom/ConfirmationAlertComponent.vue';
-
-const modalRef = ref<InstanceType<typeof ConfirmationAlertComponent> | null>(null)
 
 const priorities = ref([
     { id: 1, name: 'Low' },
@@ -39,46 +40,109 @@ const categories = ref([
     { id: 4, name: 'Other' },
 ]);
 
-const assignes = ref([]);
-const selectedAssigne = ref(null);
+const assignees = ref([]);
+const selectedAssignee = ref(null);
+const comment = ref(null);
 
 // ADD PROPER TYPES
 
-const props = defineProps<{
-    ticket: any,
-    auth?: { user?: any }
+const ticket = defineModel<any>('ticket')
 
+const props = defineProps<{
+    auth?: { user?: any }
+    permissions?: any
 }>()
 
 const emit = defineEmits(['close'])
 
 const goBack: () => void = () => emit('close')
 
-const getAssignes = () => axios.get(route('helpdesk.assignes'))
+const getAssignees = () => axios.get(route('helpdesk.assignees'))
     .then(({ data }) => {
-        assignes.value = data.data
 
-        console.log('asss', assignes)
+        assignees.value = data.data
     })
     .catch(err => {
         console.error(err)
     })
 
 onMounted(() => {
-    getAssignes()
+    getAssignees();
+
+    formatAssignee();
 
 })
 
-function openModal() {
-  modalRef.value?.openModal()
+const formatAssignee = () => {
+    let formatSelectedAssignee = {id: props.ticket.assignee?.id, name: props.ticket.assignee?.name };
+    selectedAssignee.value = props.ticket.assignee ? formatSelectedAssignee : null
 }
 
-const open = ref(false)
-const onSelectChange = (e) => {
-    modalRef.value?.openModal()
-  // open modal only when the user picks "open"
-  console.log('event', e.target.value)
-  open.value = e.target.value === 'open'
+const onSelectChange = () => {
+
+    Swal.fire({
+        title: `Are you sure`,
+        text: `Assign ticket to ${selectedAssignee.value?.name}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#14A44D",
+        cancelButtonColor: "#999999",
+        confirmButtonText: "Update",
+        theme: swalTheme
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.patch(
+                route('helpdesk.ticket.update.assignee', props.ticket.id),
+                { assigned_to_id: selectedAssignee.value?.id }
+            )
+                .then(({ data }) => {
+                    console.log('DADAD', data)
+                    ticket.value.assignee = data
+
+                    toast.success(`Assigned to ${selectedAssignee.value?.name}`)
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+
+        } else {
+            formatAssignee();
+            // selectedAssignee.value = props.ticket.assignee ? props.ticket.assignee : null
+        }
+    });
+}
+
+function addComment() {
+    Swal.fire({
+        title: `Are you sure`,
+        text: `Add comment to this ticket?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#14A44D",
+        cancelButtonColor: "#999999",
+        confirmButtonText: "Update",
+        theme: swalTheme
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.post(
+                route('helpdesk.ticket.store.comment'),
+                {
+                    ticket_id: props.ticket.id,
+                    body: comment.value,
+                })
+                .then(({ data }) => {
+
+                    ticket.value.comments.push(data)
+                    toast.success('Comment Added');
+
+                    comment.value = null
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+
+        }
+    });
 }
 
 </script>
@@ -104,7 +168,7 @@ const onSelectChange = (e) => {
             <div
                 class="md:min-h-[700px] flex flex-col-reverse md:grid md:[grid-template-columns:70%_30%] gap-4 p-4 md:mt-12">
                 <div class="flex flex-col gap-8 p-4">
-                    <div class="card w-96 bg-base-100 dark:bg-zinc-950 shadow-sm w-full">
+                    <div class="card w-96 bg-gray-50 dark:bg-zinc-950 shadow-sm w-full">
                         <div class="card-body">
                             <h1 class="text-2xl font-bold leading-tight break-words whitespace-pre-line">{{
                                 ticket.title }}
@@ -114,25 +178,23 @@ const onSelectChange = (e) => {
                             </p>
                         </div>
                     </div>
-                    <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950 mb-8">
+                    <div class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950 mb-8">
                         <div class="card-body flex gap-4">
                             <h1 class="text-xl font-bold leading-tight">Activity</h1>
                             <p class="text-sm text-zinc-500 px-1">Conversations and updates</p>
                             <div class="flex flex-col gap-4 mt-2">
-                                <div class="p-4 border rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                                <div v-for="comment in ticket.comments"
+                                    class="p-4 border rounded-lg bg-zinc-100 dark:bg-zinc-800">
                                     <div class="flex items-center gap-2 mb-2">
-                                        <span class="font-medium">Support Agent</span>
-                                        <span class="text-xs text-gray-500">2024-10-01 15:00</span>
+                                        <span class="font-medium">{{ comment.author.name }}</span>
+                                        <span class="text-xs text-gray-500">{{ dayjs(comment.created_at).fromNow()
+                                            }}</span>
                                     </div>
                                     <p class="text-sm dark:text-zinc-50">
-                                        Hello, thank you for reaching out. We're sorry to hear about the issues
-                                        you're
-                                        facing with your internet connectivity. Our team is currently investigating
-                                        the
-                                        problem and will get back to you shortly with a solution.
+                                        {{ comment.body }}
                                     </p>
                                 </div>
-                                <div class="p-4 border rounded-lg bg-zinc-100 dark:bg-zinc-800">
+                                <!-- <div class="p-4 border rounded-lg bg-zinc-100 dark:bg-zinc-800">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="font-medium">User</span>
                                         <span class="text-xs text-gray-500">2024-10-01 16:30</span>
@@ -142,27 +204,27 @@ const onSelectChange = (e) => {
                                         forward
                                         to hearing back from your team soon.
                                     </p>
-                                </div>
+                                </div> -->
                             </div>
                             <div class="divider"></div>
                             <p class="text-sm text-zinc-500 px-1">Add a comment</p>
                             <div class="px-1">
-                                <textarea placeholder="Type here..." class="textarea textarea-md border-1 w-full"
-                                    rows="8"></textarea>
+                                <textarea v-model="comment" placeholder="Type here..."
+                                    class="textarea textarea-md border-1 dark:border-0 w-full bg-gray-200 dark:bg-zinc-800" rows="8"></textarea>
+                            </div>
+                            <div class="w-full">
+                                <button class="btn btn-neutral dark:btn-success float-right" @click="addComment">Add Comment</button>
                             </div>
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Pick a file</legend>
-                                <input type="file" class="file-input" />
+                                <input type="file" class="file-input bg-gray-200 dark:bg-zinc-800 p-1" />
                                 <label class="label">Max size 2MB</label>
                             </fieldset>
-                            <div class="w-full">
-                                <button class="btn btn-neutral float-right">Submit</button>
-                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="flex flex-col gap-8 p-4">
-                    <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
+                    <div class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950">
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Ticket Details</h1>
                             <div class="flex flex-row justify-between gap-4 mt-4 text-zinc-500">
@@ -203,7 +265,7 @@ const onSelectChange = (e) => {
                             </div>
                         </div>
                     </div>
-                    <div v-if="ticket.assigned_to_id" class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
+                    <div v-if="ticket.assigned_to_id" class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950">
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Assigned to</h1>
                             <div class="flex flex-row items-center gap-4 mt-4">
@@ -213,27 +275,29 @@ const onSelectChange = (e) => {
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <h1 class="text-md font-bold leading-tight">{{ props.auth?.user.name }}</h1>
-                                    <p class="text-sm text-zinc-500">Software Engineer</p>
+                                    <h1 class="text-md font-bold leading-tight">{{ ticket.assignee.name }}</h1>
+                                    <p class="text-sm text-zinc-500">{{ ticket.assignee.role.display_name }}</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
+                    <div v-if="props.permissions.adminAccess" class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950">
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Admin Options</h1>
                             <fieldset class="fieldset">
-                                <legend class="fieldset-legend">Select Assigne</legend>
-                                <select v-model="selectedAssigne" @change="onSelectChange" class="select w-full">
+                                <legend class="fieldset-legend">Select assignee</legend>
+                                <select v-model="selectedAssignee" @change="onSelectChange"
+                                    class="select bg-gray-200 dark:bg-zinc-800 w-full">
                                     <option disabled selected :value="null">Select User</option>
-                                    {{ assignes }}
-                                    <option v-for="assigne in assignes" :key="assigne.id" :value="assigne.id">
-                                        {{ assigne.name }}</option>
+                                    {{ assignees }}
+                                    <option v-for="assignee in assignees" :key="assignee.id" :value="assignee">
+                                        {{ assignee.name }}</option>
                                 </select>
                             </fieldset>
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Update Status</legend>
-                                <select @change="onSelectChange" class="select capitalize w-full">
+                                <select @change="onSelectChange"
+                                    class="select bg-gray-200 dark:bg-zinc-800 capitalize w-full">
                                     <option disabled selected>{{ ticket.status }}</option>
                                     <option>Chrome</option>
                                     <option>FireFox</option>
@@ -242,10 +306,11 @@ const onSelectChange = (e) => {
                             </fieldset>
                         </div>
                     </div>
-                    <div class="card w-96 bg-base-100 shadow-sm w-full dark:bg-zinc-950">
+                    <div class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950">
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Attachments</h1>
-                            <div class="flex flex-row justify-between items-center border gap-4 mt-4 p-4 rounded-lg">
+                            <div
+                                class="flex flex-row justify-between items-center border gap-4 mt-4 p-4 rounded-lg bg-gray-200 dark:bg-zinc-800">
                                 <div class="flex flex-row items-center gap-2">
                                     <PaperClipIcon class="size-5" />
                                     <div class="flex flex-col">
@@ -253,7 +318,7 @@ const onSelectChange = (e) => {
                                         <span class="text-xs text-zinc-500">250KB</span>
                                     </div>
                                 </div>
-                                <span class="hover:bg-zinc-200 hover:dark:bg-zinc-800 p-2 rounded-md cursor-pointer">
+                                <span class="hover:bg-zinc-300 hover:dark:bg-zinc-800 p-2 rounded-md cursor-pointer">
                                     <ArrowDownTrayIcon class="size-5" />
                                 </span>
                             </div>
@@ -263,5 +328,4 @@ const onSelectChange = (e) => {
             </div>
         </main>
     </div>
-    <ConfirmationAlertComponent v-model:open="open" ref="modalRef" :message="'Are you sure you want to update?'" />
 </template>

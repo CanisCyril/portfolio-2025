@@ -5,7 +5,7 @@ namespace App\Http\Resources\Helpdesk;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class AssigneResource extends JsonResource
+class AssigneeResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

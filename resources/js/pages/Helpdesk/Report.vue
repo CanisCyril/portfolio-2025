@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { Head, useForm } from '@inertiajs/vue3';
 import ApexChart from 'vue3-apexcharts'
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { usePreferredDark } from '@vueuse/core'
 
 import {
@@ -14,6 +14,16 @@ const isDark = usePreferredDark()
 const areaRef = ref(null)
 const pieRef = ref(null)
 const columnRef = ref(null)
+
+type Counts = {
+    open: number;
+    resolved: number;
+};
+
+const props = defineProps<{
+    counts: Counts,
+    areaReport: any,
+}>()
 
 watch(isDark, (dark) => {
     areaRef.value?.updateOptions(
@@ -129,7 +139,7 @@ const areaOptions = {
     },
     xaxis: {
         type: 'datetime',
-        categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
+        categories: []
     },
     tooltip: {
         x: {
@@ -139,9 +149,24 @@ const areaOptions = {
 }
 
 const areaSeries = [
-    { name: 'Unresolved', data: [11, 32, 45, 32, 34, 52, 41] },
-    { name: 'Resolved', data: [31, 40, 28, 51, 42, 109, 100] },
+    { name: 'Unresolved', data: [] },
+    { name: 'Resolved', data: [] },
 ];
+
+
+onMounted(async () => {
+
+    console.log('areaReport', props.areaReport.period);
+    areaOptions.xaxis.categories = props.areaReport.period;
+    areaSeries[0].data = props.areaReport.resolvedTicketCount;
+    areaSeries[1].data = props.areaReport.openTicketCount;
+
+    // console.log('period', props.areaReport.period.target);
+    // console.log('open', props.openTicketCount);
+    // console.log('closed', props.resolvedTicketCount);
+});
+
+
 
 </script>
 
@@ -176,7 +201,7 @@ const areaSeries = [
                     <div class="card-body">
                         <h6 class="text-md text-zinc-500">Tickets Open</h6>
                         <div class="flex flex-row items-center justify-content">
-                            <p class="font-bold">205</p>
+                            <p class="font-bold">{{ props.counts.open }}</p>
                             <div class="bg-zinc-200 dark:bg-zinc-800 p-2 rounded-md">
                                 <ArrowTrendingUpIcon class="size-6" />
                             </div>
@@ -188,7 +213,7 @@ const areaSeries = [
                     <div class="card-body">
                         <h6 class="text-md text-zinc-500">Tickets Resolved</h6>
                         <div class="flex flex-row items-center justify-content">
-                            <p class="font-bold">231</p>
+                            <p class="font-bold">{{ props.counts.resolved }}</p>
                             <div class="bg-zinc-200 dark:bg-zinc-800 p-2 rounded-md">
                                 <CheckCircleIcon class="size-6" />
                             </div>

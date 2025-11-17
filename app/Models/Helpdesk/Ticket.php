@@ -16,6 +16,7 @@ class Ticket extends Model
             'category_id',
             'priority_id',
             'status',
+            'assigned_to_id'
         ];
 
         public function user()
@@ -48,6 +49,10 @@ class Ticket extends Model
             return $this->belongsTo(TicketStatus::class, 'status');
         }
 
+        public function assignee()
+        {
+            return $this->belongsTo(User::class,'assigned_to_id');
+        }
 
         public function scopeOpen($q) {
             return $q->where('status','open');

@@ -23,12 +23,14 @@ class TicketController extends Controller
         return redirect()->route('helpdesk')->with('success', 'Ticket created successfully!');
     }
 
-    public function show($id)
-    {
-        $ticket = Ticket::findOrFail($id);
+    // public function show($id)
+    // {
+    //     dd('test');
+    //     $ticket = Ticket::with('assignee:id,name')->findOrFail($id);
+    //     dd($ticket);
 
-        return inertia('Helpdesk/ViewTicket', ['ticket' => $ticket]);
-    }
+    //     return inertia('Helpdesk/ViewTicket', ['ticket' => $ticket]);
+    // }
 
     public function activeTab(Request $request)
     {

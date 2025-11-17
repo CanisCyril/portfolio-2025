@@ -354,6 +354,7 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                             <th>ID</th>
                             <th>Subject</th>
                             <th>Name</th>
+                            <th>Assignee</th>
                             <th>Status</th>
                             <th>Due</th>
                         </tr>
@@ -365,6 +366,7 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                             <th>{{ ticket.id }}</th>
                             <td>{{ ticket.title }}</td>
                             <td>{{ ticket.user.name }}</td>
+                            <td>{{ ticket.assignee?.name ?? 'Not Assigned'}}</td>
                             <td>
                                 <span class="h-auto min-w-16 px-2 badge" :class="statusColor(ticket.status)">
                                     {{ ticket.status }}
@@ -381,7 +383,7 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
 
         </div>
     </main>
-    <ViewTicket v-if="selectedRow" :ticket="selectedRow" :auth="page.props.auth" @close="selectedRow = null" />
+    <ViewTicket v-if="selectedRow" v-model:ticket="selectedRow" :auth="page.props.auth" :permissions="permissions" @close="selectedRow = null" />
 </template>
 
 <style>
