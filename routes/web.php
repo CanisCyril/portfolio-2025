@@ -16,6 +16,8 @@ use App\Http\Controllers\Helpdesk\ReportController;
 use App\Http\Controllers\Helpdesk\UserController as assigneeController;
 use App\Http\Controllers\Helpdesk\UpdateAssigneeController;
 use App\Http\Controllers\Helpdesk\TicketCommentController;
+use App\Http\Controllers\Helpdesk\TicketAttachmentController;
+
 
 
 // * Helpdesk Routes * //
@@ -49,6 +51,9 @@ Route::post('/helpdesk/active-tab', [TicketController::class, 'activeTab'])
 Route::get('/helpdesk/ticket/{ticket}', [TicketController::class, 'show'])
     ->name('helpdesk.ticket.show');
 
+Route::get('/helpdesk/fetch/tickets', [TicketController::class, 'fetchTickets'])
+    ->name('helpdesk.tickets.fetch');
+
 Route::patch('/helpdesk/ticket/assignee/{ticket}', UpdateAssigneeController::class)
     ->name('helpdesk.ticket.update.assignee');
 
@@ -57,6 +62,12 @@ Route::patch('/helpdesk/ticket/assignee/{ticket}', UpdateAssigneeController::cla
 
 Route::post('/helpdesk/ticket/store/comment', [TicketCommentController::class, 'store'])
     ->name('helpdesk.ticket.store.comment');
+
+Route::get('/helpdesk/ticket/attachment/{attachment}', [TicketAttachmentController::class, 'download'])
+    ->name('helpdesk.ticket.download.attachment');
+
+Route::post('/helpdesk/ticket/attachment/{id}', [TicketAttachmentController::class, 'store'])
+    ->name('helpdesk.ticket.store.attachment');
 
 // * General Routes * //
 

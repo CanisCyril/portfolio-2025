@@ -21,8 +21,9 @@ class DashboardController extends Controller
                 'assignee:id,role_id,name',
                 'assignee.role:id,name,display_name', 
                 'comments:id,author_id,ticket_id,body,created_at',
-                'comments.author:id,name',])
-            ->paginate(8)
+                'comments.author:id,name',
+                'attachments'])
+            ->paginate(10)
             ->withQueryString();
 
         $counts = [

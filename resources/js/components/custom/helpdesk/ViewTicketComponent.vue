@@ -17,6 +17,7 @@ import {
 import { statusColor } from '@/utils/helpdesk/statusColor'
 import { priorityColor } from '@/utils/helpdesk/priorityColor'
 import { ArrowBigDownDashIcon } from 'lucide-vue-next';
+import { tuple } from 'yup';
 
 
 const swalTheme = document.documentElement.classList.contains('dark')
@@ -43,6 +44,7 @@ const categories = ref([
 const assignees = ref([]);
 const selectedAssignee = ref(null);
 const comment = ref(null);
+// const attachments = ref([]);
 
 // ADD PROPER TYPES
 
@@ -74,9 +76,14 @@ onMounted(() => {
 })
 
 const formatAssignee = () => {
-    let formatSelectedAssignee = {id: props.ticket.assignee?.id, name: props.ticket.assignee?.name };
+    let formatSelectedAssignee = { id: props.ticket.assignee?.id, name: props.ticket.assignee?.name };
     selectedAssignee.value = props.ticket.assignee ? formatSelectedAssignee : null
 }
+
+const formatSizeKb = (bytes?: number | null) => {
+    if (!bytes) return '0 KB';
+    return `${Math.round(bytes / 1024)} KB`;
+};
 
 const onSelectChange = () => {
 
@@ -145,6 +152,39 @@ function addComment() {
     });
 }
 
+function uploadAttachment(ticketId: number, event: Event) {
+    Swal.fire({
+        title: `Are you sure`,
+        text: `Add attachment(s) to this ticket?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#14A44D",
+        cancelButtonColor: "#999999",
+        confirmButtonText: "Update",
+        theme: swalTheme
+    }).then((result) => {
+        if (result.isConfirmed) {
+
+            const formData = new FormData();
+
+            Array.from(event?.target?.files).forEach(file => {
+                formData.append('attachments[]', file);
+            });
+
+            axios
+                .post(route('helpdesk.ticket.store.attachment', ticketId), formData)
+                .then(({ data }) => {
+                    toast.success('Attachment(s) uploaded successfully');
+                    ticket.value = data;
+                    // event.target?.value = '';
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        }
+    });
+}
+
 </script>
 
 <template>
@@ -194,30 +234,22 @@ function addComment() {
                                         {{ comment.body }}
                                     </p>
                                 </div>
-                                <!-- <div class="p-4 border rounded-lg bg-zinc-100 dark:bg-zinc-800">
-                                    <div class="flex items-center gap-2 mb-2">
-                                        <span class="font-medium">User</span>
-                                        <span class="text-xs text-gray-500">2024-10-01 16:30</span>
-                                    </div>
-                                    <p class="text-sm dark:text-zinc-50">
-                                        Thank you for the prompt response. I appreciate your assistance and look
-                                        forward
-                                        to hearing back from your team soon.
-                                    </p>
-                                </div> -->
                             </div>
                             <div class="divider"></div>
                             <p class="text-sm text-zinc-500 px-1">Add a comment</p>
                             <div class="px-1">
                                 <textarea v-model="comment" placeholder="Type here..."
-                                    class="textarea textarea-md border-1 dark:border-0 w-full bg-gray-200 dark:bg-zinc-800" rows="8"></textarea>
+                                    class="textarea textarea-md border-1 dark:border-0 w-full bg-gray-200 dark:bg-zinc-800"
+                                    rows="8"></textarea>
                             </div>
                             <div class="w-full">
-                                <button class="btn btn-neutral dark:btn-success float-right" @click="addComment">Add Comment</button>
+                                <button class="btn btn-neutral dark:btn-success float-right" @click="addComment">Add
+                                    Comment</button>
                             </div>
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Pick a file</legend>
-                                <input type="file" class="file-input bg-gray-200 dark:bg-zinc-800 p-1" />
+                                <input type="file" multiple class="file-input bg-gray-200 dark:bg-zinc-800 p-1"
+                                    @change="uploadAttachment(ticket.id, $event)" />
                                 <label class="label">Max size 2MB</label>
                             </fieldset>
                         </div>
@@ -281,7 +313,8 @@ function addComment() {
                             </div>
                         </div>
                     </div>
-                    <div v-if="props.permissions.adminAccess" class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950">
+                    <div v-if="props.permissions.adminAccess"
+                        class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950">
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Admin Options</h1>
                             <fieldset class="fieldset">
@@ -306,20 +339,23 @@ function addComment() {
                             </fieldset>
                         </div>
                     </div>
-                    <div class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950">
+                    <div v-if="ticket.attachments.length"
+                        class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950">
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Attachments</h1>
-                            <div
+                            <div v-for="attachment in ticket.attachments"
                                 class="flex flex-row justify-between items-center border gap-4 mt-4 p-4 rounded-lg bg-gray-200 dark:bg-zinc-800">
                                 <div class="flex flex-row items-center gap-2">
                                     <PaperClipIcon class="size-5" />
                                     <div class="flex flex-col">
-                                        <span>Screenshot error.png</span>
-                                        <span class="text-xs text-zinc-500">250KB</span>
+                                        <span class="break-all">{{ attachment.original_name }}</span>
+                                        <span class="text-xs text-zinc-500">{{ formatSizeKb(attachment.size) }}</span>
                                     </div>
                                 </div>
                                 <span class="hover:bg-zinc-300 hover:dark:bg-zinc-800 p-2 rounded-md cursor-pointer">
-                                    <ArrowDownTrayIcon class="size-5" />
+                                    <a :href="route('helpdesk.ticket.download.attachment', attachment.id)">
+                                        <ArrowDownTrayIcon class="size-5" />
+                                    </a>
                                 </span>
                             </div>
                         </div>

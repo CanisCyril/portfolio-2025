@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { Head, router } from '@inertiajs/vue3';
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
 import { TicketIcon } from '@heroicons/vue/24/solid'
 
 import { Field, Form, ErrorMessage, configure } from 'vee-validate';
 import * as yup from 'yup';
 
+import { PaperClipIcon, TrashIcon
+} from '@heroicons/vue/24/outline'
 
 // Default values
 configure({
@@ -21,13 +23,22 @@ const schema = yup.object({
     description: yup.string().required(),
     category_id: yup.number().required().label('Category'),
     priority_id: yup.number().required().label('Priority'),
-    // file: yup.mixed().required(), //must add proper file validation later
+    file: yup.mixed(), //must add proper file validation later
 });
+
+const onFileChange = (e: Event, values, setFieldValue) => {
+  const files = Array.from(e.target?.files)
+
+  setFieldValue('attachments', [
+    ...(values.attachments || []),
+    ...files,
+  ])
+}
 
 function onSubmit(values) {
     router.post(route('helpdesk.tickets.store'), values, {
         replace: true,
-        ...(values.file ? { forceFormData: true } : {}),
+        ...(values.attachments.length ? { forceFormData: true } : {}),
         onSuccess: () => {
             // reset vee-validate via resetForm() if you’re using the <Form v-slot>
         },
@@ -35,10 +46,6 @@ function onSubmit(values) {
 }
 
 
-// const onSubmit = handleSubmit(values => {
-//     console.log(values);
-//   // validated values here
-// })
 
 
 const priorities = ref([
@@ -55,20 +62,6 @@ const categories = ref([
     { id: 4, name: 'Hardware' },
     { id: 4, name: 'Other' },
 ]);
-
-function submit() {
-    // form.post(route('helpdesk.tickets.store'), {
-    //     replace: true,
-    //     forceFormData: true,
-    //     onSuccess: () => {
-    //         form.reset();
-    //     }
-    // });
-}
-
-onMounted(() => {
-
-})
 
 </script>
 
@@ -87,7 +80,7 @@ onMounted(() => {
                         <h2 class="card-title p-4 mb-1">Create Ticket</h2>
                     </div>
                     <div class="flex flex-col gap-8 p-4">
-                        <Form :validation-schema="schema" @submit="onSubmit" v-slot="{ errors, values }">
+                        <Form :validation-schema="schema" @submit="onSubmit" v-slot="{ errors, values, setFieldValue }">
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Title</legend>
                                 <Field name="title" v-slot="{ field, meta }">
@@ -122,20 +115,19 @@ onMounted(() => {
                                 <fieldset class="fieldset w-full">
                                     <legend class="fieldset-legend">Category</legend>
                                     <Field name="category_id" v-slot="{ field, meta }">
-                                    <select
-                                        v-bind="field"
-                                        class="select focus:outline-none focus:border-2 focus:border-sky-900 dark:bg-zinc-800 border-1 w-full"
-                                        :class="{
-                                            'input-error': errors.category_id,
-                                            'input-success': !errors.category_id && meta.dirty
-                                        }">
-                                        <option disabled selected>Category</option>
-                                        <option v-for="category in categories" :key="category.id" :value="category.id"
-                                            :aria-invalid="!errors.category_id"
-                                            :aria-describedby="errors.category_id ? 'category-error' : undefined">
-                                            {{ category.name }}
-                                        </option>
-                                    </select>
+                                        <select v-bind="field"
+                                            class="select focus:outline-none focus:border-2 focus:border-sky-900 dark:bg-zinc-800 border-1 w-full"
+                                            :class="{
+                                                'input-error': errors.category_id,
+                                                'input-success': !errors.category_id && meta.dirty
+                                            }">
+                                            <option disabled selected>Category</option>
+                                            <option v-for="category in categories" :key="category.id"
+                                                :value="category.id" :aria-invalid="!errors.category_id"
+                                                :aria-describedby="errors.category_id ? 'category-error' : undefined">
+                                                {{ category.name }}
+                                            </option>
+                                        </select>
                                     </Field>
                                     <ErrorMessage name="category_id"
                                         class="first-letter:uppercase text-error p-2 text-sm" />
@@ -143,13 +135,10 @@ onMounted(() => {
                                 <fieldset class="fieldset w-full">
                                     <legend class="fieldset-legend">Priority</legend>
                                     <Field name="priority_id" v-slot="{ field, meta }">
-                                        <select
-                                            v-bind="field"
-                                            class="select focus:outline-none focus:border-2 focus:border-sky-900
-                                            dark:bg-zinc-800 border-1 w-full"
-                                            :class="{
-                                            'input-error': errors.priority_id,
-                                            'input-success': !errors.priority_id && meta.dirty
+                                        <select v-bind="field" class="select focus:outline-none focus:border-2 focus:border-sky-900
+                                            dark:bg-zinc-800 border-1 w-full" :class="{
+                                                'input-error': errors.priority_id,
+                                                'input-success': !errors.priority_id && meta.dirty
                                             }">
                                             <option disabled selected>Priority</option>
                                             <option v-for="priority in priorities" :key="priority.id"
@@ -164,12 +153,26 @@ onMounted(() => {
                             </div>
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Pick a file</legend>
-                                <Field name="file" @change="values.attachment = $event.target.files?.[0] ?? null"
-                                    type="file" class="file-input" />
+                                <Field name="file" @change="(e) => onFileChange(e, values, setFieldValue)"
+                                    type="file" multiple class="file-input file:h-full focus:outline-none focus:border-2 focus:border-sky-900
+                                            dark:bg-zinc-800 border-1 w-full md:w-[50%]" />
                                 <label class="label p-1">Optional</label>
                                 <label class="label">Max size 2MB</label>
                                 <ErrorMessage name="file" class="first-letter:uppercase text-error p-2 text-sm" />
                             </fieldset>
+                            <div v-if="values.attachments" v-for="(file, index) in values.attachments"
+                                class="flex flex-row justify-between items-center border w-full sm:w-75 gap-4 mt-4 p-4 rounded-lg bg-gray-200 dark:bg-zinc-800">
+                                <div class="flex flex-row items-center gap-2">
+                                    <PaperClipIcon class="size-5" />
+                                    <div class="flex flex-col">
+                                        <span>{{ file.name }}</span>
+                                        <span class="text-xs text-zinc-500">{{ Math.round(file.size / 1024) }} KB</span>
+                                    </div>
+                                </div>
+                                <span class="bg-zinc-300 dark:bg-zinc-900 hover:bg-zinc-400 hover:dark:bg-zinc-950 p-2 rounded-md cursor-pointer">
+                                    <TrashIcon class="size-5" />
+                                </span>
+                            </div>
                             <div class="card-actions justify-end">
                                 <button
                                     class="btn btn-neutral dark:border-zinc-300 dark:text-white dark:hover:bg-zinc-300 dark:hover:text-zinc-900 btn-outline mt-6">Submit
