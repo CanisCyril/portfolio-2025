@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, Link } from '@inertiajs/vue3';
 import { ref } from 'vue'
 
-import { TicketIcon } from '@heroicons/vue/24/solid'
+import { TicketIcon, ArrowLongLeftIcon } from '@heroicons/vue/24/solid'
 
 import { Field, Form, ErrorMessage, configure } from 'vee-validate';
 import * as yup from 'yup';
 
 import { PaperClipIcon, TrashIcon
 } from '@heroicons/vue/24/outline'
+
+import BackNav from '@/components/custom/helpdesk/BackNavComponent.vue'
 
 // Default values
 configure({
@@ -38,15 +40,12 @@ const onFileChange = (e: Event, values, setFieldValue) => {
 function onSubmit(values) {
     router.post(route('helpdesk.tickets.store'), values, {
         replace: true,
-        ...(values.attachments.length ? { forceFormData: true } : {}),
+        ...(values.attachments?.length ? { forceFormData: true } : {}),
         onSuccess: () => {
             // reset vee-validate via resetForm() if you’re using the <Form v-slot>
         },
     })
 }
-
-
-
 
 const priorities = ref([
     { id: 1, name: 'Low' },
@@ -72,6 +71,7 @@ const categories = ref([
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </Head>
     <div class="min-h-screen bg-neutral-200 dark:bg-zinc-900">
+        <BackNav :href="route('helpdesk')" :title="'Create Ticket'"/>
         <main class="md:pt-8 container mx-auto max-w-4xl">
             <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm">
                 <div class="card-body p-0">

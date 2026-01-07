@@ -9,6 +9,9 @@ import { toast } from 'vue3-toastify';
 
 dayjs.extend(relativeTime)
 
+import { Field, Form, ErrorMessage, configure } from 'vee-validate';
+import * as yup from 'yup';
+
 import {
     ArrowLeftIcon, ShieldCheckIcon, WifiIcon, TagIcon,
     CalendarIcon, ClockIcon, PaperClipIcon, ArrowDownTrayIcon
@@ -16,8 +19,7 @@ import {
 
 import { statusColor } from '@/utils/helpdesk/statusColor'
 import { priorityColor } from '@/utils/helpdesk/priorityColor'
-import { ArrowBigDownDashIcon } from 'lucide-vue-next';
-import { tuple } from 'yup';
+// import { ArrowBigDownDashIcon } from 'lucide-vue-next';
 
 
 const swalTheme = document.documentElement.classList.contains('dark')
@@ -25,6 +27,15 @@ const swalTheme = document.documentElement.classList.contains('dark')
     : 'auto';
 
 // Components
+
+configure({
+    validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
+});
+
+
+const schema = yup.object({
+    body: yup.string().required().label("Comment"),
+});
 
 const priorities = ref([
     { id: 1, name: 'Low' },
@@ -41,9 +52,12 @@ const categories = ref([
     { id: 4, name: 'Other' },
 ]);
 
+const statuses = ref(['Open', 'Assigned', 'Closed']);
+
 const assignees = ref([]);
 const selectedAssignee = ref(null);
-const comment = ref(null);
+const selectedStatus = ref(null);
+// const body = ref(null);
 // const attachments = ref([]);
 
 // ADD PROPER TYPES
@@ -72,6 +86,10 @@ onMounted(() => {
     getAssignees();
 
     formatAssignee();
+
+    selectedStatus.value = ticket.value.status[0].toUpperCase() + ticket.value.status.slice(1);
+    console.log('SELECTED STATUS', selectedStatus.value)
+    
 
 })
 
@@ -103,8 +121,9 @@ const onSelectChange = () => {
                 { assigned_to_id: selectedAssignee.value?.id }
             )
                 .then(({ data }) => {
-                    console.log('DADAD', data)
-                    ticket.value.assignee = data
+                    console.log('TICKET', data)
+                    ticket.value.assignee = data.assignee
+                    ticket.value.comments = data.comments
 
                     toast.success(`Assigned to ${selectedAssignee.value?.name}`)
                 })
@@ -119,7 +138,42 @@ const onSelectChange = () => {
     });
 }
 
-function addComment() {
+const onSelectStatusChange = () => {
+
+    Swal.fire({
+        title: `Are you sure`,
+        text: `Update status to ${selectedStatus.value}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#14A44D",
+        cancelButtonColor: "#999999",
+        confirmButtonText: "Update",
+        theme: swalTheme
+    }).then((result) => {
+        if (result.isConfirmed) {
+            axios.patch(
+                route('helpdesk.ticket.update.status', props.ticket.id),
+                { status: selectedStatus.value.toLowerCase() }
+            )
+                .then(({ data }) => {
+                    console.log('SUCCESS STATUS UPDATE', data)
+                    ticket.value.status = data.status
+                    ticket.value.comments = data.comments
+
+                    toast.success(`Status updated to ${selectedStatus.value}`)
+                })
+                .catch(err => {
+                    console.error(err)
+                })
+
+        } else {
+            // selectedAssignee.value = props.ticket.assignee ? props.ticket.assignee : null
+        }
+    });
+}
+
+function addComment(values, { resetForm }) {
+    console.log('ADD COMMENT VALUES', values.body);
     Swal.fire({
         title: `Are you sure`,
         text: `Add comment to this ticket?`,
@@ -135,14 +189,14 @@ function addComment() {
                 route('helpdesk.ticket.store.comment'),
                 {
                     ticket_id: props.ticket.id,
-                    body: comment.value,
+                    body: values.body,
                 })
                 .then(({ data }) => {
 
                     ticket.value.comments.push(data)
                     toast.success('Comment Added');
 
-                    comment.value = null
+                            resetForm()
                 })
                 .catch(err => {
                     console.error(err)
@@ -184,6 +238,8 @@ function uploadAttachment(ticketId: number, event: Event) {
         }
     });
 }
+
+// setFieldValue('body', null)
 
 </script>
 
@@ -228,24 +284,34 @@ function uploadAttachment(ticketId: number, event: Event) {
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="font-medium">{{ comment.author.name }}</span>
                                         <span class="text-xs text-gray-500">{{ dayjs(comment.created_at).fromNow()
-                                            }}</span>
+                                        }}</span>
                                     </div>
-                                    <p class="text-sm dark:text-zinc-50">
+                                    <p class="text-sm dark:text-zinc-50 whitespace-pre-wrap mt-4">
                                         {{ comment.body }}
                                     </p>
                                 </div>
                             </div>
                             <div class="divider"></div>
-                            <p class="text-sm text-zinc-500 px-1">Add a comment</p>
-                            <div class="px-1">
-                                <textarea v-model="comment" placeholder="Type here..."
-                                    class="textarea textarea-md border-1 dark:border-0 w-full bg-gray-200 dark:bg-zinc-800"
-                                    rows="8"></textarea>
-                            </div>
-                            <div class="w-full">
-                                <button class="btn btn-neutral dark:btn-success float-right" @click="addComment">Add
-                                    Comment</button>
-                            </div>
+                            <Form :validation-schema="schema" @submit="addComment"
+                                v-slot="{ errors, values, setFieldValue }">
+
+                                <p class="text-sm text-zinc-500 px-1 mb-2">Add a comment</p>
+                                <Field name="body" v-slot="{ field, meta }">
+                                    <textarea v-bind="field"
+                                        class="textarea focus:outline-none focus:border-2 focus:border-sky-900 bg-gray-200 dark:bg-zinc-800 border-1 h-42 w-full"
+                                        :class="{
+                                            'input-error': errors.body,
+                                            'input-success': !errors.body && meta.dirty
+                                        }" placeholder="Type here..." :aria-invalid="!errors.body"
+                                        :aria-describedby="errors.body ? 'body-error' : undefined">
+                                    </textarea>
+                                </Field>
+                                <ErrorMessage name="body" class="first-letter:uppercase text-error p-2 text-sm" />
+                                <div class="w-full mt-3">
+                                    <button class="btn btn-neutral dark:btn-success float-right">Add
+                                        Comment</button>
+                                </div>
+                            </Form>
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Pick a file</legend>
                                 <input type="file" multiple class="file-input bg-gray-200 dark:bg-zinc-800 p-1"
@@ -324,22 +390,22 @@ function uploadAttachment(ticketId: number, event: Event) {
                                     <option disabled selected :value="null">Select User</option>
                                     {{ assignees }}
                                     <option v-for="assignee in assignees" :key="assignee.id" :value="assignee">
-                                        {{ assignee.name }}</option>
+                                        {{ assignee.name }}
+                                    </option>
                                 </select>
                             </fieldset>
                             <fieldset class="fieldset">
                                 <legend class="fieldset-legend">Update Status</legend>
-                                <select @change="onSelectChange"
+                                <select v-model="selectedStatus" @change="onSelectStatusChange"
                                     class="select bg-gray-200 dark:bg-zinc-800 capitalize w-full">
-                                    <option disabled selected>{{ ticket.status }}</option>
-                                    <option>Chrome</option>
-                                    <option>FireFox</option>
-                                    <option>Safari</option>
+                                    <option v-for="status in statuses" :key="status" :value="status">
+                                        {{ status }}
+                                    </option>
                                 </select>
                             </fieldset>
                         </div>
                     </div>
-                    <div v-if="ticket.attachments.length"
+                    <div v-if="ticket.attachments?.length"
                         class="card w-96 bg-gray-50 shadow-sm w-full dark:bg-zinc-950">
                         <div class="card-body">
                             <h1 class="text-xl font-bold leading-tight">Attachments</h1>

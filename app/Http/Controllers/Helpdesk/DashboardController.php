@@ -27,9 +27,10 @@ class DashboardController extends Controller
             ->withQueryString();
 
         $counts = [
+            'my' => Ticket::userTickets(auth()->user()->id)->count(),
             'open' => Ticket::open()->count(),
             'assigned' => Ticket::assigned()->count(),
-            'recentlyClosed' => Ticket::closed()->count(),
+            'recentlyClosed' => Ticket::recentlyClosed()->count(),
         ];
 
         return Inertia::render('Helpdesk/Dashboard', [

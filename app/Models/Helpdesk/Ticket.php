@@ -69,6 +69,11 @@ class Ticket extends Model
         return $q->where('status', 'assigned')->whereNull('resolved_at');
     }
 
+    public function scopeUnresolved($q)
+    {
+        return $q->whereNull('resolved_at');
+    }
+
     public function scopeRecentlyClosed($q)
     {
         return $q->closed()->where('resolved_at', '>=', now()->subWeek());
@@ -76,7 +81,15 @@ class Ticket extends Model
 
     public function scopeUserTickets($q, $userId)
     {
-        return $q->where('user_id', $userId);
+        if (request()->user()->can('helpdesk.admin.access')) {
+
+            return $q->where('assigned_to_id', $userId);
+        } else {
+
+            return $q->where('user_id', $userId)->orWhere(function ($query) {
+                $query->recentlyClosed();
+            });
+        }
         // USER ID SHOULD BE CREATED BY ID
     }
 
@@ -86,14 +99,8 @@ class Ticket extends Model
             ActiveTabEnum::OPEN => $q->open(),
             ActiveTabEnum::ASSIGNED => $q->assigned(),
             ActiveTabEnum::CLOSED => $q->recentlyClosed(),
-            ActiveTabEnum::MY => $q->where(function ($subQ) use ($userId) {
-                    $subQ->where(fn($q1) => $q1->open()->userTickets($userId))
-                    ->orWhere(fn($q1) => $q1->recentlyClosed()->userTickets($userId));
-                }),
-            default => $q->where(function ($subQ) use ($userId) {
-                    $subQ->where(fn($q1) => $q1->open()->userTickets($userId))
-                    ->orWhere(fn($q1) => $q1->recentlyClosed()->userTickets($userId));
-                }),
+            ActiveTabEnum::MY => $q->userTickets($userId),
+            default => $q->userTickets($userId)
         };
     }
 
@@ -103,6 +110,10 @@ class Ticket extends Model
 
         if ($search === '') {
             return $query;
+        }
+
+        if ($search == 'not assigned') {
+            $search = $query->whereDoesntHave('assignee'); //no worky yet
         }
 
         return $query->where(function ($q) use ($search) {

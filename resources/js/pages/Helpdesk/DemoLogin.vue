@@ -27,8 +27,8 @@ onMounted(() => {
     </Head>
     <main class="bg-neutral-200 dark:bg-zinc-900">
         <div class="h-screen container mx-auto flex justify-center items-center">
-            <div class="card w-[28rem] sm:w-[34rem] rem] mx-4 bg-base-100 dark:bg-zinc-950 ">
-                <div class="flex flex-col gap-4 card-body items-center text-center rounded-lg shadow-sm">
+            <div class="card w-[28rem] sm:w-[34rem] rem] mx-4">
+                <div class="flex flex-col gap-4 card-body bg-zinc-100 dark:bg-zinc-950 items-center text-center rounded-lg shadow-sm">
                     <h2 class="card-title text-3xl text-shadow-2xs">Hello!</h2>
                     <div class="mt-2">
                         <p class="text-lg text-shadow-2xs">Welcome to the helpdesk demo.</p>

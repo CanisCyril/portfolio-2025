@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Helpdesk\Ticket;
 use App\Models\Helpdesk\TicketAttachment;
+use App\Models\Helpdesk\TicketComment;
 use Inertia\Inertia;
 use App\Http\Requests\Helpdesk\TicketStoreRequest;
 use App\Enums\Helpdesk\ActiveTabEnum;
@@ -82,7 +83,7 @@ class TicketController extends Controller
         $validated = $request->validate([
             'page' => 'nullable|integer|min:1',
             'per_page' => 'nullable|integer|min:1|max:100',
-            'sort_column' => ['nullable', Rule::in(['id', 'title', 'ticket_status', 'created_at'])],
+            'sort_column' => ['nullable', Rule::in(['id', 'title', 'status', 'created_at'])],
             'sort_direction' => ['nullable', Rule::in(['asc', 'desc'])],
         ]);
 
@@ -104,9 +105,35 @@ class TicketController extends Controller
             ])
             ->search($request->input('search'))
             ->orderBy($sortColumn, $sortDirection)
-            ->paginate($perPage, $columns = ['*'], $pageName = 'page', $page);
+            ->paginate($perPage, $columns = ['*'], $pageName = 'page', $page)
+            ->withQueryString();
 
         return $tickets;
+    }
+
+    public function updateStatus(Request $request, Ticket $ticket)
+    {
+        $validated = $request->validate([
+            'status' => ['required', Rule::in(['open', 'assigned', 'closed'])],
+        ]);
+
+        $ticket->update([
+            'status' => $validated['status'],
+            'resolved_at' => $validated['status'] === 'closed' ? now() : null,
+        ]);
+
+        TicketComment::create([
+            'ticket_id' => $ticket->id,
+            'author_id' => auth()->id(),
+            'body' => "Status changed to {$validated['status']}.",
+        ]);
+
+        $ticket->load('comments.author');
+
+        return response()->json([
+            'status'   => $ticket->status,
+            'comments' => $ticket->comments,
+        ]);
     }
 
 }

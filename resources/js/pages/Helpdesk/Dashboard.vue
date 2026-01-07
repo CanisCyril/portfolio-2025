@@ -12,7 +12,10 @@ import {
 
 import Vue3Datatable from '@bhplugin/vue3-datatable';
 import '@bhplugin/vue3-datatable/dist/style.css';
-import Pagination from '@/components/custom/Pagination.vue';
+// import Pagination from '@/components/custom/Pagination.vue';
+
+import { VueAwesomePaginate } from "vue-awesome-paginate";
+import "vue-awesome-paginate/dist/style.css";
 
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -61,6 +64,7 @@ type Paginator<T> = {
 }
 
 type Counts = {
+    my: number;
     open: number;
     assigned: number;
     recentlyClosed: number;
@@ -74,7 +78,7 @@ const props = defineProps<{
 
 const page = usePage<PageProps>();
 const bp = useBreakpoints(breakpointsTailwind)
-const isMdUp = bp.greaterOrEqual('md')   // true when Tailwind's md: rules apply
+const isMdUp = bp.greaterOrEqual('md')   
 
 const STORAGE_KEY = 'theme' // 'light' | 'dark'
 
@@ -83,26 +87,23 @@ const table = reactive({
     loading: true,
     search: null,
     totalRows: 0,
-    current_page: 1,
+    currentPage: 1,
     pagesize: 10,
-    sort_column: 'id',
-    sort_direction: 'asc',
+    sortColumn: 'id',
+    sortDirection: 'asc',
 });
 const rows = ref([]);
-
-// const rows: any = ref(null);
-
 
 const activeClass = 'text-zinc-200 pb-4'
 const inactiveClass = 'text-gray-600 hover:text-gray-900 dark:hover:text-white pb-4 dark:text-zinc-400 transition-colors duration-300 ease-in-out'
 
 const cols =
     ref([
-        { field: "id", title: "ID", type: 'number', width: "90px", filter: false },
+        { field: "id", title: "ID", type: 'number', width: "90px", filter: false, isUnique: true },
         { field: "title", title: "Subject" },
-        { field: "name", title: "Name", sort: false },
+        { field: "user.name", title: "Name", sort: false },
         { field: "assignee", title: "Assignee", sort: false },
-        { field: "status", title: "Status"},
+        { field: "status", title: "Status" },
         { field: "created_at", title: "Created" }, //change to due with calcuations
     ]) || [];
 
@@ -123,8 +124,8 @@ watch(
 let filterBarOpen = ref(true)
 
 const tabs = [
-    { key: 'my', label: 'My Tickets', count: 0, isAdmin: false },
-    { key: 'all', label: 'All', count: 0, isAdmin: true },
+    { key: 'my', label: 'My Tickets', count: props.counts.my, isAdmin: false },
+    // { key: 'all', label: 'All', count: 0, isAdmin: true },
     { key: 'open', label: 'Open', count: props.counts.open, isAdmin: true },
     { key: 'assigned', label: 'Assigned', count: props.counts.assigned, isAdmin: true },
     { key: 'closed', label: 'Recently Closed', count: props.counts.recentlyClosed, isAdmin: true },
@@ -135,8 +136,34 @@ const selectedRow = ref<Ticket | null>(null)
 
 watch(activeTab, (newKey) => {
 
-    activeTabTickets(newKey);
+    // activeTabTickets(newKey);
+    tabSwitched();
+
 });
+
+function mobilePagination(pageNumber: number) {
+    table.currentPage = pageNumber
+
+    fetchTickets({
+        current_page: table.currentPage,
+        pagesize: 5,
+        search: table.search,
+        activeTab: activeTab.value,
+        sort_column: table.sortColumn,
+        sort_direction: table.sortDirection,
+    });
+}
+
+function tabSwitched() {
+    fetchTickets({
+        current_page: table.currentPage,
+        pagesize: isMdUp.value ? table.pagesize : 5,
+        search: table.search,
+        activeTab: activeTab.value,
+        sort_column: table.sortColumn,
+        sort_direction: table.sortDirection,
+    });
+}
 
 
 function toggleFilterBar() {
@@ -145,52 +172,20 @@ function toggleFilterBar() {
 
 onMounted(async () => {
 
-
-    console.log('ticekts', props.tickets)
-
     table.totalRows = props.tickets.total;
-
-    console.log('total rows', table.totalRows)
-
-    rows.value = props.tickets.data.map(ticket => ({
-        id: ticket.id,
-        title: ticket.title,
-        name: ticket.user.name,
-        assignee: ticket.assignee?.name ?? 'Not Assigned',
-        status: ticket.status,
-        created_at: dayjs(ticket.created_at).fromNow(),
-    }));
 
     if (page.props.permissions === undefined) {
         await router.reload({ only: ['permissions'] })
     }
 
-    console.log('tickets', props.tickets.data)
-
     table.loading = false;
 
 });
 
-const activeTabTickets = (activeTab: any) => {
-
-    router.get(route('helpdesk'), { activeTab }, {
-        only: ['tickets', 'counts'],
-        preserveState: true,
-        preserveScroll: true,
-        replace: true,
-        // ...(values.file ? { forceFormData: true } : {}),
-        onSuccess: () => {
-            // reset vee-validate via resetForm() if you’re using the <Form v-slot>
-        },
-    })
-};
-
-const fetchTickets = useDebounceFn((params: any) => { //add params data type custom
+const fetchTickets = useDebounceFn((params?: any) => { //add params data type custom
 
     table.loading = true;
     // rows.value = [];
-
-    console.log('fetch fired', params);
 
     axios.get(route('helpdesk.tickets.fetch'), {
         params: {
@@ -203,22 +198,27 @@ const fetchTickets = useDebounceFn((params: any) => { //add params data type cus
         },
     })
         .then((response) => {
-            rows.value = response.data.data.map((ticket: Ticket) => ({
-                id: ticket.id,
-                title: ticket.title,
-                name: ticket.user.name,
-                assignee: ticket.assignee?.name ?? 'Not Assigned',
-                status: ticket.status,
-                created_at: dayjs(ticket.created_at).fromNow(),
-            }));
+            rows.value = response.data.data;
             table.totalRows = response.data.total;
             table.loading = false;
         })
         .catch((error) => {
-            console.error('Error fetching tickets:', error);
             table.loading = false;
         });
-}, 500);
+}, 300);
+
+const rowClicked = (row: any) => {
+
+    selectedRow.value = row
+};
+
+
+const rowClosed = () => {
+    selectedRow.value = null
+    router.reload({ only: ['counts'] })
+};
+
+// THEME TOGGLER
 
 function applyTheme(dark) {
     isDark.value = dark
@@ -273,13 +273,13 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     @click="toggleFilterBar" />
                 <div class="tooltip md:tooltip-right md:mt-4" data-tip="Create Ticket" aria-label="Create Ticket">
                     <Link :href="route('helpdesk.create')">
-                    <PlusCircleIcon class="size-6 cursor-pointer  hover:text-green-600" />
+                        <PlusCircleIcon class="size-6 cursor-pointer  hover:text-green-600" />
                     </Link>
                 </div>
                 <div v-if="props.permissions.adminAccess == true" class="tooltip md:tooltip-right"
                     data-tip="View Reports" aria-label="View Reports">
                     <Link :href="route('helpdesk.report')">
-                    <ChartPieIcon class="size-6 cursor-pointer" />
+                        <ChartPieIcon class="size-6 cursor-pointer" />
                     </Link>
                 </div>
 
@@ -304,7 +304,7 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 </div>
                 <div class="cursor-pointer tooltip md:tooltip-right" data-tip="Logout" aria-label="Logout">
                     <Link href="/helpdesk/demo-login">
-                    <ArrowLeftEndOnRectangleIcon class="size-6" />
+                        <ArrowLeftEndOnRectangleIcon class="size-6" />
                     </Link>
                 </div>
                 <!-- <div class="avatar m-2">
@@ -318,7 +318,7 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
          transition-[max-height,padding] md:transition-[flex-basis,padding,border-width]
          duration-500 ease-in-out
          md:min-h-dvh md:min-w-0 dark:bg-zinc-800" :class="filterBarOpen
-            ?  'p-4 w-full md:basis-1/5 md:border-r'
+            ? 'p-4 w-full md:basis-1/5 md:border-r'
             : 'max-h-0 p-0 md:basis-0 md:border-0'">
             <div class="w-full flex flex-col md:min-w-0 [contain:paint] dark:text-white
                 transition-[opacity,filter] duration-300" :class="filterBarOpen
@@ -334,7 +334,8 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                                 <path d="m21 21-4.3-4.3"></path>
                             </g>
                         </svg>
-                        <input type="search" placeholder="Search tickets" class="placeholder:italic" />
+                        <input type="input" v-model="table.search" @input="mobilePagination(table.currentPage)" placeholder="Search tickets"
+                            class="placeholder:italic" />
                     </label>
                 </div>
 
@@ -371,7 +372,7 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     <button class="btn btn-soft btn-sm" @click="dismiss">Dismiss</button>
                 </div>
             </div>
-            <div v-for="ticket in props.tickets.data" :key="ticket.id" @click="selectedRow = ticket"
+            <div v-for="ticket in rows" :key="ticket.id" @click="selectedRow = ticket"
                 class="md:hidden card w-[80%] mx-8 bg-gray-100 dark:bg-zinc-800 card-sm shadow-sm m-4">
                 <div class="card-body">
                     <p class="text-sm">{{ ticket.id }}</p>
@@ -381,7 +382,8 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                             <h2 class="card-title">{{ ticket.title }}</h2>
                         </div>
 
-                        <div class="h-auto w-24 p-2 badge" :class="statusColor(ticket.status)">{{ ticket.status }}</div>
+                        <div :class="[statusColor(ticket.status), 'badge min-w-24 p-2 truncate']">{{ ticket.status }}
+                        </div>
                     </div>
                     <div class="flex justify-between w-full">
                         <p>{{ ticket.user.name }}</p>
@@ -390,7 +392,9 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     </div>
                 </div>
             </div>
-            <Pagination :links="props.tickets.links" />
+            <vue-awesome-paginate v-if="table.totalRows" class="my-12" :total-items="table.totalRows" :items-per-page="5" :max-pages-shown="5" v-model="table.currentPage"
+                @click="mobilePagination" />
+            <h1 v-else class="mt-8 text-[1.5rem]" >No Tickets</h1>
 
         </div>
 
@@ -422,66 +426,38 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     <input type="search" v-model="table.search" placeholder="Search tickets"
                         class="placeholder:italic" />
                 </label>
-                <p class="text-zinc-500 p-2 text-sm">Add active tab here maybee</p>
+                <p class="text-zinc-500 p-2 text-sm capitalize">{{ activeTab }} Tickets</p>
             </div>
             <div class="h-[90%]">
                 <vue3-datatable :rows="rows" :columns="cols" :totalRows="table.totalRows" :loading="table.loading"
-                    headerClass="dark:bg-zinc-900 dark:text-blue-900"
-                    skin="dark:text-white" 
-                    rowClass="dark:text-zinc-200 dark:odd:bg-neutral-900 dark:even:bg-zinc-800 dark:hover:bg-zinc-700 cursor-pointer transition-colors duration-300 ease-in" 
-                    :search="table.search" 
-                    :isServerMode="true" 
-                    :sortable="true" 
-                    @change="fetchTickets"
-                    @click="selectedRow = ticket">  
+                    headerClass="dark:bg-zinc-900 dark:text-blue-900" skin="dark:text-white"
+                    rowClass="dark:text-zinc-200 dark:odd:bg-neutral-900 dark:even:bg-zinc-800 dark:hover:bg-zinc-700 cursor-pointer transition-colors duration-300 ease-in cursor-pointer"
+                    :search="table.search" :isServerMode="true" :sortable="true" @change="fetchTickets"
+                    @rowClick="rowClicked">
+                    <template #assignee="data">
+                        <span>
+                            {{ data.value.assignee?.name ?? 'Not Assigned' }}
+                        </span>
+                    </template>
                     <template #status="data">
-                        <span class="h-auto min-w-16 px-2 badge" :class="statusColor(data.value.status)">
+                        <span class="h-auto min-w-16 px-2 badge capitalize" :class="statusColor(data.value.status)">
                             {{ data.value.status }}
                         </span>
                     </template>
+                    <template #created_at="data">
+                        <span>
+                            {{ dayjs(data.value.created_at).format('MMM D, YYYY h:mm A') }}
+                        </span>
+                    </template>
                 </vue3-datatable>
-                <!-- skin="bh-table-striped bh-table-hover dark:text-white" rowClass="dark:text-zinc-50 dark:even:bg-zinc-900 dark:odd:bg-zinc-800 dark:hover:bg-zinc-500 cursor-pointer transition-colors duration-300 ease-in-out" -->
-                <!-- <table class="table border-b-1 dark:text-white">
-                    <thead>
-                        <tr class="dark:text-white">
-                            <th>ID</th>
-                            <th>Subject</th>
-                            <th>Name</th>
-                            <th>Assignee</th>
-                            <th>Status</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody class="border-1">
-                        <tr v-for="ticket in props.tickets.data" :key="ticket.id"
-                            class="dark:even:bg-zinc-900 dark:odd:bg-zinc-800 dark:hover:bg-zinc-700 hover:bg-zinc-300 cursor-pointer transition-colors duration-600 ease-in-out max-h-8"
-                            @click="selectedRow = ticket">
-                            <th>{{ ticket.id }}</th>
-                            <td>{{ ticket.title }}</td>
-                            <td>{{ ticket.user.name }}</td>
-                            <td>{{ ticket.assignee?.name ?? 'Not Assigned' }}</td>
-                            <td>
-                                <span class="h-auto min-w-16 px-2 badge" :class="statusColor(ticket.status)">
-                                    {{ ticket.status }}
-                                </span>
-                            </td>
-                            <td>{{ dayjs(ticket.created_at).fromNow() }}</td>
-                        </tr>
-                    </tbody>
-                </table> -->
-                <!-- <div class="shrink-0 align-top">
-                    <Pagination class="float-right" :links="props.tickets.links" />
-                </div> -->
             </div>
-
         </div>
     </main>
     <ViewTicket v-if="selectedRow" v-model:ticket="selectedRow" :auth="page.props.auth" :permissions="permissions"
-        @close="selectedRow = null" />
+        @close="rowClosed" />
 </template>
 
 <style>
-
 /* Dark Mode */
 
 
@@ -494,42 +470,139 @@ html.dark .bh-pagination-info {
 } */
 
 /* Bottom arrow */
-th .bh-sort svg polygon
-{
+th .bh-sort svg polygon {
     fill: #374151 !important;
 }
 
 html.dark .bh-table-responsive table tbody tr {
-  /* --tw-border-opacity: 0; */
-border-color:oklch(12% 0.006 285.885);
+    /* --tw-border-opacity: 0; */
+    border-color: oklch(12% 0.006 285.885);
 }
 
 html.dark .bh-table-responsive {
-  border-radius: 0 !important;
-  background-color: transparent;
+    border-radius: 0 !important;
+    background-color: transparent;
 }
 
 html.dark th {
     background: oklch(19% 0.006 285.885);
-} 
+}
 
+.bh-absolute {
+    background-color: transparent;
+}
+
+html.dark .bh-skeleton-box {
+    background-color: #09090b !important;
+    /* zinc-950 */
+    color: #e5e7eb !important;
+}
+
+/* (optional) inner “bars” of the skeleton */
+/* .dark .bh-skeleton-box * {
+  background-color: #686885 !important;  zinc-800
+} */
+
+html.dark .bh-h-11 {
+    background-color: #121218 !important;
+}
 
 /* Pagination */
 
 html.dark .bh-active {
-    background-color: #52525b!important;
-    border-color: #52525b!important;
+    background-color: #52525b !important;
+    border-color: #52525b !important;
 }
 
 .bh-active {
-    background-color: #3f3f46!important;
-    border-color: #3f3f46!important;
+    background-color: #3f3f46 !important;
+    border-color: #3f3f46 !important;
 }
 
 .bh-page-item:hover {
-    background-color: #71717a!important;
-    border-color: #71717a!important;
+    background-color: #71717a !important;
+    border-color: #71717a !important;
 }
 
- 
+/* Mobile Pagination */
+  .pagination-container {
+    display: flex;
+
+    column-gap: 10px;
+  }
+
+  .paginate-buttons {
+    height: 40px;
+
+    width: 40px;
+
+    border-radius: 20px;
+
+    cursor: pointer;
+
+    background-color: rgb(242, 242, 242);
+
+    border: 1px solid rgb(217, 217, 217);
+
+    color: black;
+  }
+
+  .paginate-buttons:hover {
+    background-color: #d8d8d8;
+  }
+
+  .active-page {
+    background-color: #3498db;
+
+    border: 1px solid #3498db;
+
+    color: white;
+  }
+
+  .active-page:hover {
+    background-color: #2988c8;
+  }
+
+
+  html.dark .paginate-buttons {
+    /* height: 40px;
+
+    width: 40px;
+
+    border-radius: 20px;
+
+    cursor: pointer;
+
+    background-color: rgb(242, 242, 242);
+
+    border: 1px solid rgb(217, 217, 217); */
+
+    background-color: black;
+    color: white;
+  }
+
+  html.dark .paginate-buttons {
+    /* height: 40px;
+
+    width: 40px;
+
+    border-radius: 20px;
+
+    cursor: pointer;
+
+    background-color: rgb(242, 242, 242);
+
+    border: 1px solid rgb(217, 217, 217); */
+
+    background-color: black;
+    color: white;
+  }
+
+  /* Mobile Pagination */
+
+  html.dark .active-page {
+    border-color: white;
+    background-color: rgb(44, 41, 41);
+  }
+
 </style>

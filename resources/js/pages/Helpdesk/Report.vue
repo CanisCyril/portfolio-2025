@@ -4,6 +4,8 @@ import ApexChart from 'vue3-apexcharts'
 import { ref, watch, onMounted } from 'vue'
 import { usePreferredDark } from '@vueuse/core'
 
+import BackNav from '@/components/custom/helpdesk/BackNavComponent.vue'
+
 import {
     ShieldExclamationIcon, CheckCircleIcon, ArrowTrendingUpIcon, BellAlertIcon
 } from '@heroicons/vue/24/outline'
@@ -176,8 +178,9 @@ onMounted(async () => {
         <title>Helpdesk - Reports</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </Head>
-    <div class="min-h-screen bg-neutral-200 dark:bg-zinc-900 p-4 sm:p-8">
-        <main class="flex flex-col gap-4 pt-8 mx-auto md:max-w-6xl lg:md-w-7xl">
+    <div class="min-h-screen bg-neutral-200 dark:bg-zinc-900 ">
+        <BackNav :href="route('helpdesk')" :title="'Reports'" />
+        <main class="flex flex-col gap-4 pt-8 mx-auto md:max-w-6xl lg:md-w-7xl p-4 sm:p-8">
             <h1 class="text-2xl font-bold leading-tight">Dashboard</h1>
             <h6 class="text-md font-bold text-zinc-500 mt-2 leading-tight antialiased">Reports</h6>
             <div id="filters">

@@ -57,6 +57,9 @@ Route::get('/helpdesk/fetch/tickets', [TicketController::class, 'fetchTickets'])
 Route::patch('/helpdesk/ticket/assignee/{ticket}', UpdateAssigneeController::class)
     ->name('helpdesk.ticket.update.assignee');
 
+Route::patch('/helpdesk/ticket/status/{ticket}', [TicketController::class, 'updateStatus'])
+    ->name('helpdesk.ticket.update.status');
+
 // Route::post('/helpdesk/ticket/assignee/{ticket}', UpdateAssigneeController::class)
 //     ->name('helpdesk.ticket.update.assignee');
 
