@@ -1,24 +1,51 @@
 <script setup lang="ts">
 // import { Head, useForm } from '@inertiajs/vue3';
-import { onMounted } from 'vue'
 import ApexChart from 'vue3-apexcharts'
+import { ref, watch, onMounted } from 'vue'
+import { usePreferredDark } from '@vueuse/core'
+
+import BackNav from '@/components/custom/helpdesk/BackNavComponent.vue'
 
 import {
     ShieldExclamationIcon, CheckCircleIcon, ArrowTrendingUpIcon, BellAlertIcon
 } from '@heroicons/vue/24/outline'
 
+// const mode = useColorMode()        // persists to localStorage by default <-- look in to this more
 
-onMounted(() => {
+const isDark = usePreferredDark()
+const areaRef = ref(null)
+const pieRef = ref(null)
+const columnRef = ref(null)
 
-})
+type Counts = {
+    open: number;
+    resolved: number;
+};
+
+const props = defineProps<{
+    counts: Counts,
+    areaReport: any,
+}>()
+
+watch(isDark, (dark) => {
+    areaRef.value?.updateOptions(
+        { chart: { foreColor: dark ? '#fff' : '#000' } });
+    pieRef.value?.updateOptions(
+        { chart: { foreColor: dark ? '#fff' : '#000' } })
+    columnRef.value?.updateOptions(
+        { chart: { foreColor: dark ? '#fff' : '#000' } })
+});
+
 const columnSeries = [{
     name: 'Net Profit',
     data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
-},
-];
+}];
+
 const columnOptions = {
     chart: {
         type: 'bar',
+        foreColor: isDark.value ? '#fff' : '#000000',
+
     },
     plotOptions: {
         bar: {
@@ -56,29 +83,21 @@ const columnOptions = {
     }
 };
 
-
+// Watchers
 
 const pieSeries = [44, 55, 13, 33];
 const pieOptions = {
     chart: {
         width: 380,
         type: 'donut',
+        foreColor: isDark.value ? '#fff' : '#000000',
+
     },
     dataLabels: {
         enabled: true
     },
-//       theme: {
-//       mode: 'dark', 
-//       palette: 'palette1', 
-//       monochrome: {
-//           enabled: false,
-//           color: '#255aee',
-//           shadeTo: 'dark',
-//           shadeIntensity: 0.65
-//       },
-//   },
-  
-    labels: ['John', 'Jim', 'Support', 'Dev'], // <- slice names
+
+    labels: ['John', 'Jim', 'Support', 'Dev'],
     responsive: [{
         breakpoint: 480,
         options: {
@@ -87,14 +106,16 @@ const pieOptions = {
             },
             legend: {
                 // show: false
-                 position: 'bottom',
+
+
+                position: 'bottom',
             }
         }
     }],
     legend: {
         position: 'right',
         fontSize: '16px',
-         markers: {
+        markers: {
             offsetX: -6
         }
     },
@@ -103,14 +124,15 @@ const pieOptions = {
 const areaOptions = {
     chart: {
         height: 250,
-        type: 'area'
+        type: 'area',
+        foreColor: isDark.value ? '#fff' : '#000000',
     },
     dataLabels: {
         enabled: false
     },
-     legend: {
+    legend: {
         fontSize: '16px',
-         markers: {
+        markers: {
             offsetX: -2,
         }
     },
@@ -119,18 +141,34 @@ const areaOptions = {
     },
     xaxis: {
         type: 'datetime',
-        categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
+        categories: []
     },
     tooltip: {
         x: {
             format: 'dd/MM/yy HH:mm'
         },
     },
-};
+}
+
 const areaSeries = [
-    { name: 'Unresolved', data: [11, 32, 45, 32, 34, 52, 41] },
-    { name: 'Resolved', data: [31, 40, 28, 51, 42, 109, 100] },
+    { name: 'Unresolved', data: [] },
+    { name: 'Resolved', data: [] },
 ];
+
+
+onMounted(async () => {
+
+    console.log('areaReport', props.areaReport.period);
+    areaOptions.xaxis.categories = props.areaReport.period;
+    areaSeries[0].data = props.areaReport.resolvedTicketCount;
+    areaSeries[1].data = props.areaReport.openTicketCount;
+
+    // console.log('period', props.areaReport.period.target);
+    // console.log('open', props.openTicketCount);
+    // console.log('closed', props.resolvedTicketCount);
+});
+
+
 
 </script>
 
@@ -140,8 +178,9 @@ const areaSeries = [
         <title>Helpdesk - Reports</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     </Head>
-    <div class="min-h-screen bg-neutral-200 dark:bg-zinc-900 p-4 sm:p-8">
-        <main class="flex flex-col gap-4 pt-8 mx-auto md:max-w-6xl lg:md-w-7xl">
+    <div class="min-h-screen bg-neutral-200 dark:bg-zinc-900 ">
+        <BackNav :href="route('helpdesk')" :title="'Reports'" />
+        <main class="flex flex-col gap-4 pt-8 mx-auto md:max-w-6xl lg:md-w-7xl p-4 sm:p-8">
             <h1 class="text-2xl font-bold leading-tight">Dashboard</h1>
             <h6 class="text-md font-bold text-zinc-500 mt-2 leading-tight antialiased">Reports</h6>
             <div id="filters">
@@ -165,7 +204,7 @@ const areaSeries = [
                     <div class="card-body">
                         <h6 class="text-md text-zinc-500">Tickets Open</h6>
                         <div class="flex flex-row items-center justify-content">
-                            <p class="font-bold">205</p>
+                            <p class="font-bold">{{ props.counts.open }}</p>
                             <div class="bg-zinc-200 dark:bg-zinc-800 p-2 rounded-md">
                                 <ArrowTrendingUpIcon class="size-6" />
                             </div>
@@ -177,7 +216,7 @@ const areaSeries = [
                     <div class="card-body">
                         <h6 class="text-md text-zinc-500">Tickets Resolved</h6>
                         <div class="flex flex-row items-center justify-content">
-                            <p class="font-bold">231</p>
+                            <p class="font-bold">{{ props.counts.resolved }}</p>
                             <div class="bg-zinc-200 dark:bg-zinc-800 p-2 rounded-md">
                                 <CheckCircleIcon class="size-6" />
                             </div>
@@ -215,30 +254,33 @@ const areaSeries = [
                 <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4 h-96">
                     <div class="card-body p-2 md:p-4">
                         <h6 class="text-sm text-zinc-400">Ticket Volume</h6>
-                        <ApexChart class="dark:text-zinc-600" type="area" :options="areaOptions" :series="areaSeries" height="90%"/>
+                        <ApexChart ref="areaRef" class="dark:text-zinc-600" type="area" :options="areaOptions"
+                            :series="areaSeries" height="90%" />
                     </div>
                 </div>
                 <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4  h-96">
                     <div class="card-body p-2 md:p-4">
                         <h6 class="text-sm text-zinc-400">Ticket Completed By</h6>
-                        <ApexChart type="pie" :options="pieOptions" :series="pieSeries" width="100%" height="90%" />
+                        <ApexChart ref="pieRef" type="pie" :options="pieOptions" :series="pieSeries" width="100%"
+                            height="90%" />
                     </div>
                 </div>
                 <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4 lg:col-span-2 h-96">
                     <div class="card-body p-2 md:p-4">
                         <h6 class="text-sm text-zinc-400">Ticket Completed By</h6>
-                        <ApexChart class="dark:text-zinc-600" type="bar" :options="columnOptions" :series="columnSeries" height="90%" />
+                        <ApexChart ref="columnRef" class="dark:text-zinc-600" type="bar" :options="columnOptions"
+                            :series="columnSeries" height="90%" />
                     </div>
                 </div>
                 <!-- Adds tickets by category (Top Issues) -->
-           
+
             </div>
         </main>
     </div>
 </template>
 
 <style>
-    .apexcharts-tooltip-active {
-        /* color: red; */
-    }
+.apexcharts-tooltip-active {
+    /* color: red; */
+}
 </style>

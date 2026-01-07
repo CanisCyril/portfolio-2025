@@ -4,7 +4,7 @@ namespace App\Http\Requests\Helpdesk;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TicketRequest extends FormRequest
+class TicketCommentStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,8 @@ class TicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
-            // 'description' => 'required|string',
-            // 'category_id' => 'required|integer|exists:ticket_categories,id',
-            // 'priority' => 'required|integer|exists:ticket_priorities,id',
+            'ticket_id' => 'required',
+            'body' => 'required|max:2000'
         ];
     }
 }

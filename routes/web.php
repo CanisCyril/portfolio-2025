@@ -10,12 +10,28 @@ use App\Http\Controllers\Games\Mining\UserGoldController;
 use App\Http\Controllers\Helpdesk\TicketController;
 
 // Helpdesk
+use App\Http\Controllers\Helpdesk\DemoAuthController;
 use App\Http\Controllers\Helpdesk\DashboardController;
 use App\Http\Controllers\Helpdesk\ReportController;
+use App\Http\Controllers\Helpdesk\UserController as assigneeController;
+use App\Http\Controllers\Helpdesk\UpdateAssigneeController;
+use App\Http\Controllers\Helpdesk\TicketCommentController;
+use App\Http\Controllers\Helpdesk\TicketAttachmentController;
+
+
 
 // * Helpdesk Routes * //
 
-Route::get('/helpdesk', [DashboardController::class, 'index'])
+Route::get('api/assignee-list', [assigneeController::class, 'assignees'])
+    ->name('helpdesk.assignees');
+
+Route::get('/helpdesk/demo-login', [DemoAuthController::class, 'index'])
+    ->name('helpdesk.demo.index');
+
+Route::post('/helpdesk/demo/auth', [DemoAuthController::class, 'auth'])
+    ->name('helpdesk.demo.auth');
+
+Route::middleware(['auth'])->get('/helpdesk', [DashboardController::class, 'index'])
     ->name('helpdesk');
 
 
@@ -29,8 +45,32 @@ Route::get('/helpdesk/reports', [ReportController::class, 'index'])
 Route::post('/helpdesk/store-ticket', [TicketController::class, 'store'])
     ->name('helpdesk.tickets.store');
 
-Route::get('/helpdesk/tickets', [TicketController::class, 'show'])
-->name('helpdesk.tickets.show');
+Route::post('/helpdesk/active-tab', [TicketController::class, 'activeTab'])
+    ->name('helpdesk.tickets.activeTab');
+
+Route::get('/helpdesk/ticket/{ticket}', [TicketController::class, 'show'])
+    ->name('helpdesk.ticket.show');
+
+Route::get('/helpdesk/fetch/tickets', [TicketController::class, 'fetchTickets'])
+    ->name('helpdesk.tickets.fetch');
+
+Route::patch('/helpdesk/ticket/assignee/{ticket}', UpdateAssigneeController::class)
+    ->name('helpdesk.ticket.update.assignee');
+
+Route::patch('/helpdesk/ticket/status/{ticket}', [TicketController::class, 'updateStatus'])
+    ->name('helpdesk.ticket.update.status');
+
+// Route::post('/helpdesk/ticket/assignee/{ticket}', UpdateAssigneeController::class)
+//     ->name('helpdesk.ticket.update.assignee');
+
+Route::post('/helpdesk/ticket/store/comment', [TicketCommentController::class, 'store'])
+    ->name('helpdesk.ticket.store.comment');
+
+Route::get('/helpdesk/ticket/attachment/{attachment}', [TicketAttachmentController::class, 'download'])
+    ->name('helpdesk.ticket.download.attachment');
+
+Route::post('/helpdesk/ticket/attachment/{id}', [TicketAttachmentController::class, 'store'])
+    ->name('helpdesk.ticket.store.attachment');
 
 // * General Routes * //
 
@@ -90,5 +130,5 @@ Route::post('/api/gold/sell-all', [UserGoldController::class, 'sellAll']);
 Route::get('ecommerce/product-search', [ProductSearchController::class, 'search']);
 
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';
