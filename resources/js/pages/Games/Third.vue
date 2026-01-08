@@ -1,5 +1,4 @@
 <template>
-    <h6 id="xp-gained">25</h6>
     <div ref="container" style="width: 100vw; height: 100vh;"></div>
 </template>
 
@@ -14,7 +13,7 @@ import { Vector2, Raycaster } from 'three'
 import Stats from 'stats.js'
 
 import { createCharacter } from '@/utils/mining-game/character'
-import { createMap } from '@/utils/mining-game/newMapBuilder'
+import { createMap } from '@/utils/mining-game/mapBuilder'
 // should be lower case???
 import { CharacterController } from '@/utils/mining-game/characterController'
 import { MiningManager } from '@/utils/mining-game/miningManager'

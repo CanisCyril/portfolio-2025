@@ -9,7 +9,7 @@ import type { Inventory } from '@/types/inventory';
 import { Experience } from '@/types/experience';
 
 import Menu from './Components/Menu/Menu.vue';
-import ThreeJs from './ThreeJs.vue';
+import Third from './Third.vue';
 
 
 // ThreeJS imports
@@ -162,9 +162,9 @@ function handleImageError(event: Event) {
         </div>
     </div>
 
-    <div class="container mx-auto flex w-full h-[660px] gap-6 p-3">
+    <div v-if="selectedLevel" class="mx-auto flex flex-row w-full h-[660px] gap-6">
         <div class="three-js-container">
-            <ThreeJs />
+            <Third />
         </div>
 
         <!-- <div class="controls flex flex-wrap flex-col bg-stone-900 gap-6 basis-[60%] h-[40%]">
