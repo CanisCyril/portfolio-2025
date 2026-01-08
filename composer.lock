@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41244c6231567926c347412c0ced3d4e",
+    "content-hash": "181163d94fbd0493659ace94111565ae",
     "packages": [
         {
             "name": "brick/math",
@@ -1055,64 +1055,6 @@
             "time": "2025-02-03T10:55:03+00:00"
         },
         {
-            "name": "haxneeraj/laravel-virtual-wallet",
-            "version": "v1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/haxneeraj/laravel-virtual-wallet.git",
-                "reference": "4dd17a7bd6e36f8dbdb0d09d3f19b70eacd9caed"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/haxneeraj/laravel-virtual-wallet/zipball/4dd17a7bd6e36f8dbdb0d09d3f19b70eacd9caed",
-                "reference": "4dd17a7bd6e36f8dbdb0d09d3f19b70eacd9caed",
-                "shasum": ""
-            },
-            "require": {
-                "kongulov/interact-with-enum": "^1.0",
-                "php": "^8.0"
-            },
-            "require-dev": {
-                "larastan/larastan": "^2.9",
-                "laravel/pint": "^1.16",
-                "mockery/mockery": "^1.7",
-                "orchestra/testbench": "^8.18",
-                "phpunit/phpunit": "^10.5"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Haxneeraj\\LaravelVirtualWallet\\LaravelVirtualWalletServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helper.php"
-                ],
-                "psr-4": {
-                    "Haxneeraj\\LaravelVirtualWallet\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Neeraj Saini",
-                    "email": "hax-neeraj@outlook.com"
-                }
-            ],
-            "description": "Laravel Virtual Wallet Package",
-            "support": {
-                "issues": "https://github.com/haxneeraj/laravel-virtual-wallet/issues",
-                "source": "https://github.com/haxneeraj/laravel-virtual-wallet/tree/v1.0.0"
-            },
-            "time": "2025-04-23T05:50:35+00:00"
-        },
-        {
             "name": "inertiajs/inertia-laravel",
             "version": "v2.0.2",
             "source": {
@@ -1179,58 +1121,6 @@
                 "source": "https://github.com/inertiajs/inertia-laravel/tree/v2.0.2"
             },
             "time": "2025-04-10T15:08:36+00:00"
-        },
-        {
-            "name": "kongulov/interact-with-enum",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/kongulov/interact-with-enum.git",
-                "reference": "e5a0571a51f17ca5019219a843a935989e2974a0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/kongulov/interact-with-enum/zipball/e5a0571a51f17ca5019219a843a935989e2974a0",
-                "reference": "e5a0571a51f17ca5019219a843a935989e2974a0",
-                "shasum": ""
-            },
-            "require": {
-                "php": "^8.1"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Kongulov\\Traits\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ramiz Kongulov",
-                    "email": "ramiz.kongulov@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Trait for convenient use of ENUM in PHP",
-            "homepage": "https://github.com/kongulov/interact-with-enum",
-            "keywords": [
-                "enum",
-                "php"
-            ],
-            "support": {
-                "issues": "https://github.com/kongulov/interact-with-enum/issues",
-                "source": "https://github.com/kongulov/interact-with-enum/tree/1.1.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/kongulov",
-                    "type": "github"
-                }
-            ],
-            "time": "2025-04-04T19:17:17+00:00"
         },
         {
             "name": "laravel/framework",

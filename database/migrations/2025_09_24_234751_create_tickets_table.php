@@ -18,9 +18,9 @@ return new class extends Migration
             $table->text('description');
             $table->integer('priority_id')->nullable(false);
             $table->integer('category_id')->nullable(false);
-            $table->integer('assigned_to')->nullable(true);
+            $table->integer('assigned_to_id')->nullable(true);
             $table->integer('assigned_by')->nullable(true);
-            $table->enum('status', ['open', 'in_progress', 'closed'])
+            $table->enum('status', ['open', 'assigned', 'closed'])
             ->default('open');
             $table->timestamp('resolved_at')->nullable(true);
             $table->timestamp('created_at')->useCurrent();
