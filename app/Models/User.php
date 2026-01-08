@@ -6,20 +6,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Haxneeraj\LaravelVirtualWallet\Interfaces\WalletInterface;
-use Haxneeraj\LaravelVirtualWallet\Traits\HasVirtualWallet;
+// use Haxneeraj\LaravelVirtualWallet\Interfaces\WalletInterface;
+// use Haxneeraj\LaravelVirtualWallet\Traits\HasVirtualWallet;
 use App\Models\Games\Mining\UserPickaxe;
 use App\Models\Games\Mining\UserOre;
 use App\Models\Games\Mining\UserMiningLevel;
 use App\Models\Games\Mining\UserGold;
 use App\Models\Helpdesk\Priority;
 
-class User extends Authenticatable implements WalletInterface
+class User extends Authenticatable 
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
     use Notifiable;
-    use HasVirtualWallet;
+    // use HasVirtualWallet;
 
     /**
      * The attributes that are mass assignable.

@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('ticket_id')
                 ->constrained('tickets')
                 ->cascadeOnDelete();
-            $table->foreignId('user_id');
+            $table->foreignId('author_id');
             $table->text(column: 'body');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
