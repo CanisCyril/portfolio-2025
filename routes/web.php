@@ -19,7 +19,6 @@ use App\Http\Controllers\Helpdesk\TicketCommentController;
 use App\Http\Controllers\Helpdesk\TicketAttachmentController;
 
 
-
 // * Helpdesk Routes * //
 
 Route::get('api/assignee-list', [assigneeController::class, 'assignees'])
@@ -109,9 +108,9 @@ Route::get('/hello', function () {
 });
 
 
-Route::get('ecommerce', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('ecommerce.dashboard');
+// Route::get('ecommerce', [DashboardController::class, 'index'])
+//     ->middleware(['auth', 'verified'])
+//     ->name('ecommerce.dashboard');
 
 Route::get('games/mining', [MiningController::class, 'index'])
     ->middleware(['auth', 'verified'])
