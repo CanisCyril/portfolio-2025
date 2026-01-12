@@ -117,15 +117,15 @@ onMounted(() => {
                     </button>
                 </div>
                 <div class="flex gap-2 flex-wrap font-bold my-8">
-                    <span v-for="skill in skills" :key="skill" class="badge bg-gray-200 p-4">{{ skill }}</span>
+                    <span v-for="skill in skills" :key="skill" class="badge bg-gray-200 dark:bg-zinc-600 p-4 dark:text-white">{{ skill }}</span>
                 </div>
             </section>
             <aside
                 class="items-center justify-center animate-[slideIn_0.8s_ease-out_backwards_1s] [animation-delay:2s]">
-                <div class="card bg-base-100 card-lg shadow-md inset-shadow-xs dark:text-black ">
-                    <div class="card-body flex items-center gap-3">
+                <div class="card bg-base-100 dark:bg-zinc-900 card-lg shadow-md inset-shadow-xs dark:text-black rounded-xl">
+                    <div class="card-body flex items-center gap-3 bg-gray-200 dark:bg-zinc-900 dark:text-zinc-300">
                         <div class="avatar avatar-placeholder">
-                            <div class="bg-gray-100 text-dark w-24 rounded-full">
+                            <div class="bg-gray-100 text-dark dark:text-zinc-800 w-24 rounded-full">
                                 <span class="text-3xl">CC</span>
                             </div>
                         </div>
@@ -151,7 +151,7 @@ onMounted(() => {
             </p>
         </div>
 
-        <div class="flex flex-wrap md:flex-nowrap justify-center gap-8 mb-8 px-4 opacity-0 
+        <div class="flex flex-wrap md:flex-nowrap justify-center gap-8 mb-8 px-4 opacity-0 bg-gray-200 dark:bg-zinc-900 dark:text-zinc-300
             fadeIn animate-[fadeBlurIn_0.6s_ease-out_forwards] [animation-delay:1.5s] snap-start" id="projects">
             <ProjectCard title="Helpdesk" description="This is a brief description of the project."
                 preview="https://www.shutterstock.com/image-vector/image-coming-soon-no-picture-600nw-2450891047.jpg"
