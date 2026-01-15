@@ -13,12 +13,11 @@ This repository contains multiple learning-focused projects covering **backend a
 - Redis (for mining game caching - this can be ignored for now)
 
 ---
-## Installation & Setup
+## Installation & Setup (Simplest Setup without using Docker & WSL)
 
 ```bash
 
-1. Clone the repository
-1. Clone Project 
+1. Clone the repository using: git clone https://github.com/CanisCyril/portfolio-2025.git
 2. Run composer install
 3. Run npm install
 4. Change .env.example to .env
@@ -27,13 +26,49 @@ This repository contains multiple learning-focused projects covering **backend a
 7. Run php artisan migrate --seed
 8. Run php artisan serve in terminal
 9. Run npm run dev in another terminal
-
 10. http://localhost:8000/ Use this link to get to Dashboard, this is just a simple dashboard design and there is not much functionality here. Projects section is temporary and will be replaced once the projects are completed.
-11. http://localhost:8000/helpdesk/demo-login  There’s also a reponsive helpdesk I’m working on which currently allows you to create tickets, pick them up, comment, complete, reports, etc. A lot of the frontend in completed, contains a few bugs, backend still needs work and refactoring
-12. I started a project to learn the basics of ThreeJS for 3D modelling, it’s a simple mining game which uses redis to cache data. (still quite unfinished but there is some basic functionality in there, e.g. being able to move around and mine rocks). This projects backend follows SOLID principles and contains better example of using services
 
-At the moment manual commands are used but in the future automated queues will handle the redis updates e.g. xp / ore mined updates 
+```
 
-Unfortunately, I was not able to get this ready to be showcased, uploading the assets seems to make the entire system crash of it was best to leave it out with the time constraints.
+## Projects
 
-Link: http://localhost:8000/games/mining
+### Responsive Helpdesk 
+
+Currently supports:
+- Creating tickets
+- Picking up / assigning tickets
+- Commenting
+- Completing tickets
+
+Planned Features:
+- Real time notifications using websockets
+- Complete reporting, exports
+
+Notes:
+- Frontend is mostly complete (with a few bugs).  
+- Backend still needs refactoring and cleanup.
+
+Link: http://localhost:8000/helpdesk/demo-login
+
+
+### Simple Mining Game (To learn 3D Modelling - ThreeJS)
+
+Currently supports:
+- Movement
+- Very basic map build
+- Mining Ores
+- Caching XP and Ores through Redis (caches to avoid constant db reads/writes)
+
+Planned Features:
+- Ability to purchase and equip new equipment
+- Automated queues to update cached xp and ore
+- Better game/map design
+- Change characters
+
+Notes:
+
+Unfortunately, I was not able to get this ready to be showcased,
+uploading the assets seems to make the entire system crash so 
+it was best not to include it with the time constraints.
+However, you will still be able to view the code.
+
