@@ -2,6 +2,8 @@
 
 This repository contains multiple learning-focused projects covering **backend architecture, frontend UI, Redis caching, and basic 3D game mechanics using Three.js and Docker**.
 
+Please note the portfolio is still at a very early stage.
+
 ---
 
 ### Requirements
@@ -15,20 +17,22 @@ This repository contains multiple learning-focused projects covering **backend a
 ---
 ## Installation & Setup (Simplest Setup without using Docker & WSL)
 
-```bash
 
-1. Clone the repository using: git clone https://github.com/CanisCyril/portfolio-2025.git
-2. Run composer install
-3. Run npm install
+
+1. Clone the repository using: ```bash git clone https://github.com/CanisCyril/portfolio-2025.git```
+2. Run ```bash composer install```
+3. Run ```bash npm install```
 4. Change .env.example to .env
-5. Run php artisan key:generate
-6. Fill in database connection settings in .env
-7. Run php artisan migrate --seed
-8. Run php artisan serve in terminal
-9. Run npm run dev in another terminal
-10. http://localhost:8000/ Use this link to get to Dashboard, this is just a simple dashboard design and there is not much functionality here. Projects section is temporary and will be replaced once the projects are completed.
+5. Fill in database connection settings in .env
+6. Run ```bash php artisan key:generate```
+7. Run ```bash php artisan migrate --seed```
+8. Run ```bash php artisan serve in terminal```
+9. Run ```bash npm run dev in another terminal```
+10. http://localhost:8000/ Use this link to get to Dashboard, this is just a simple dashboard
+design and there is not much functionality here. Projects section is temporary and will be
+replaced once the projects are completed.
 
-```
+
 
 ## Projects
 
