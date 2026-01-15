@@ -1,6 +1,6 @@
 # Full Stack Learning Projects (Laravel • VueJS • Redis • Three.js • Docker )
 
-This repository contains multiple learning-focused projects covering **backend architecture, frontend UI, Redis caching, and basic 3D game mechanics using Three.js and Docker**.
+This repository contains learning-focused projects covering **backend architecture, frontend UI, Redis caching, and basic 3D game mechanics using Three.js and Docker**.
 
 Please note the portfolio is still at a very early stage.
 
