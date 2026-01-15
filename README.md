@@ -19,7 +19,7 @@ Please note the portfolio is still at a very early stage.
 
 
 
-1. Clone the repository using: ```bash git clone https://github.com/CanisCyril/portfolio-2025.git```
+1. Clone the repository using: ``` git clone https://github.com/CanisCyril/portfolio-2025.git```
 2. Run ``` composer install```
 3. Run ``` npm install```
 4. Change .env.example to .env
