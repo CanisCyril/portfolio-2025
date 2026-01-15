@@ -22,16 +22,16 @@ class MiningController extends Controller
     public function index()
     {
 
-        $user = User::with('wallets')->find(1);
+        $user = User::find(1);
         $ores = Ore::all();
         $userOres = $user->ores()->get();
-        $mainWallet = $user->wallets->first();
+        // $mainWallet = $user->wallets->first();
         $equippedPickaxe = $user->equippedPickaxe->pickaxe->display_name;
         $level = $user->level->level ?? 1; // Default to level 1 if not set
         $userGold = $user->gold->amount ?? 0;
 
         return Inertia::render('Games/Mining', [
-            'wallet' => $mainWallet,
+            // 'wallet' => $mainWallet,
             'ores' => $ores,
             'inventory' => $userOres,
             'equippedPickaxeName' => $equippedPickaxe,

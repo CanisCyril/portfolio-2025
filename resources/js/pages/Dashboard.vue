@@ -117,7 +117,7 @@ onMounted(() => {
                     </button>
                 </div>
                 <div class="flex gap-2 flex-wrap font-bold my-8">
-                    <span v-for="skill in skills" :key="skill" class="badge bg-gray-200 dark:bg-zinc-600 p-4 dark:text-white">{{ skill }}</span>
+                    <span v-for="skill in skills" :key="skill" class="badge bg-gray-200 dark:bg-zinc-600 p-4 text-black dark:text-white">{{ skill }}</span>
                 </div>
             </section>
             <aside
@@ -151,22 +151,24 @@ onMounted(() => {
             </p>
         </div>
 
-        <div class="flex flex-wrap md:flex-nowrap justify-center gap-8 mb-8 px-4 opacity-0 bg-gray-200 dark:bg-zinc-900 dark:text-zinc-300
+        <div class="flex flex-wrap md:flex-nowrap justify-center gap-8 mb-8 px-4 opacity-0 bg-white dark:bg-zinc-900 dark:text-zinc-300
             fadeIn animate-[fadeBlurIn_0.6s_ease-out_forwards] [animation-delay:1.5s] snap-start" id="projects">
             <ProjectCard title="Helpdesk" description="This is a brief description of the project."
+                :link="'helpdesk.demo.index'"
                 preview="https://www.shutterstock.com/image-vector/image-coming-soon-no-picture-600nw-2450891047.jpg"
-                :tags="['Vue', 'Laravel', 'Tailwind']" link="#">
+                :tags="['Vue', 'Laravel', 'Tailwind']">
             </ProjectCard>
-
+<!-- 
             <ProjectCard title="API Development" description="This is a brief description of the project."
                 preview="https://www.shutterstock.com/image-vector/image-coming-soon-no-picture-600nw-2450891047.jpg"
                 :tags="['Vue', 'Laravel', 'Tailwind']" link="#">
             </ProjectCard>
-
+-->
             <ProjectCard title="Mining Game" description="This is a brief description of the project."
+                :link="'games.mining'"
                 preview="https://www.shutterstock.com/image-vector/image-coming-soon-no-picture-600nw-2450891047.jpg"
-                :tags="['Vue', 'Laravel', 'Tailwind']" link="#">
-            </ProjectCard>
+                :tags="['Vue', 'Laravel', 'Tailwind']">
+            </ProjectCard> 
         </div>
 
         <div id="experience" class="snap-start">
@@ -278,20 +280,20 @@ onMounted(() => {
                     <p class="text-sm md:text-base text-gray-600 mt-2 mb-4">
                         I'll get back to you within 1-2 business days.</p>
                     <div class="flex flex-col md:flex-row gap-4">
-                        <label class="input md:flex-1">
+                        <label class="input md:flex-1 w-full bg-zinc-200">
                             <span class="label">Name</span>
                             <input type="text" placeholder="John Smith" />
                         </label>
-                        <label class="input md:flex-1">
+                        <label class="input md:flex-1 w-full bg-zinc-200">
                             <span class="label">Email</span>
                             <input type="text" placeholder="you@example.com" />
                         </label>
                     </div>
-                    <label class="input border-1 w-full">
+                    <label class="input border-1 w-full bg-zinc-200">
                         <span class="label">Subject</span>
                         <input type="text" placeholder="Let's work together" />
                     </label>
-                    <textarea class="textarea w-full min-h-[200px]" placeholder="Tell me about ..."></textarea>
+                    <textarea class="textarea w-full min-h-[200px] bg-zinc-200" placeholder="Tell me about ..."></textarea>
                     <div class="justify-end card-actions mt-4">
                         <button class="btn btn-neutral">Send Message</button>
                     </div>
@@ -323,14 +325,12 @@ onMounted(() => {
     opacity: 0;
     animation: fadeIn 0.8s ease forwards;
     animation-delay: 0.5s;
-    /* adjust delay */
 }
 
 .fade-in-delayed {
     opacity: 0;
     animation: fadeIn 0.8s ease forwards;
     animation-delay: 1s;
-    /* adjust delay */
 }
 
 @keyframes slideIn {

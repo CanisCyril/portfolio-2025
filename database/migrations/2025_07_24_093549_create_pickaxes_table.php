@@ -14,9 +14,9 @@ return new class () extends Migration {
             $table->id();
             $table->string('name')->nullable(false);
             $table->string('display_name')->nullable(false);
-            $table->integer('level')->nullable(false);
+            $table->integer('level_requirement')->nullable(false);
             $table->integer('durability')->nullable(false);
-            $table->integer('cost')->nullable(false);
+            $table->integer('cost')->nullable(true);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent()->useCurrentOnUpdate();
         });

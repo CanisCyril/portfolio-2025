@@ -15,6 +15,18 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UsersTableSeeder::class);
         $this->call(RolesTableSeeder::class);
+
+
+        // Move to appropriate folder - Mining Game
+
+        $this->call(OresTableSeeder::class);
+        $this->call(PickaxesTableSeeder::class);
+        $this->call(UserPickaxesTableSeeder::class);
+
+
+
+
+
         // User::factory(10)->create();
 
         // User::factory()->create([

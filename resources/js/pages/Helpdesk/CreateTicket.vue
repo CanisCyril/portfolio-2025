@@ -14,10 +14,7 @@ import BackNav from '@/components/custom/helpdesk/BackNavComponent.vue'
 
 // Default values
 configure({
-    // validateOnBlur: true, // controls if `blur` events should trigger validation with `handleChange` handler
     validateOnChange: true, // controls if `change` events should trigger validation with `handleChange` handler
-    //   validateOnInput: false, // controls if `input` events should trigger validation with `handleChange` handler
-    //   validateOnModelUpdate: true, // controls if `update:modelValue` events should trigger validation with `handleChange` handler
 });
 
 const schema = yup.object({
@@ -73,7 +70,7 @@ const categories = ref([
     <div class="min-h-screen bg-neutral-200 dark:bg-zinc-900">
         <BackNav :href="route('helpdesk')" :title="'Create Ticket'"/>
         <main class="md:pt-8 container mx-auto max-w-4xl">
-            <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm">
+            <div class="card bg-white dark:bg-zinc-950 card-lg shadow-sm">
                 <div class="card-body p-0">
                     <div class="flex flex-row items-center border-b-1 ">
                         <TicketIcon class="size-8 ml-4" />

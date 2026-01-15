@@ -20,15 +20,15 @@ const props = defineProps<{
             <p class="text-sm md:text-base">{{ description }}</p>
             <img class="flex justify-cennter p-4" :src="preview" alt="placeholder img">
             <div class="flex gap-2 flex-wrap font-bold my-2">
-                <span v-for="(tag, index) in tags" :key="index" class="badge bg-gray-200 dark:text-black p-4">{{ tag }}</span>
+                <span v-for="(tag, index) in tags" :key="index" class="badge bg-white text-neutral-500 dark:text-black p-4">{{ tag }}</span>
             </div>
 
-            <!-- <Link :href="route(props.link)"> -->
+            <Link :href="route(props.link)"> 
                 <button class="btn btn-neutral w-20">
                 <!-- add link icon -->
                     Live
                 </button>
-            <!-- </Link> -->
+            </Link>
         </div>
     </div>
 </template>

@@ -299,11 +299,16 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                     data-tip="Light Mode" aria-label="Light Mode" @click="toggleTheme">
                     <SunIcon class="size-6" />
                 </div>
-                <div class="cursor-pointer tooltip md:tooltip-right" data-tip="Settings" aria-label="Settings">
+                <div class="cursor-not-allowed opacity-40 tooltip md:tooltip-right" data-tip="Settings" aria-label="Settings">
                     <Cog8ToothIcon class="size-6" />
                 </div>
-                <div class="cursor-pointer tooltip md:tooltip-right" data-tip="Logout" aria-label="Logout">
-                    <Link href="/helpdesk/demo-login">
+                <div class="tooltip md:tooltip-right flex items-center" data-tip="Logout" aria-label="Logout">
+                    <Link  
+                        :href="route('helpdesk.demo.logout')"
+                        method="post"
+                        as="button"
+                        class="cursor-pointer"
+                    >
                         <ArrowLeftEndOnRectangleIcon class="size-6" />
                     </Link>
                 </div>
@@ -348,7 +353,7 @@ if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
                             <div v-if="props.permissions.adminAccess == true || props.permissions.adminAccess == false && tab.isAdmin == false"
                                 class="flex flex-row items-center gap-2 px-2 py-3 rounded-lg transition-colors  ease-in"
                                 :class="activeTab === tab.key ? 'bg-zinc-700 dark:bg-neutral-900 duration-300' : 'duration-0'">
-                                <span class="badge px-3 py-2 bg-zinc-200 dark:bg-zinc-600 text-black dark:text-white"
+                                <span class="badge px-3 py-2 bg-zinc-200 dark:bg-zinc-600 text-neutral-500 dark:text-white"
                                     :class="activeTab === tab.key ? '' : ''">{{ tab.count }}</span>
                                 <p>{{ tab.label }}</p>
                             </div>

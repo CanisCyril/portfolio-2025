@@ -7,6 +7,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 
+//Helpdesk Middleware
+use App\Http\Middleware\Helpdesk\HelpdeskAuth;
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
@@ -15,6 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);
+
+        $middleware->alias([
+            //Helpdesk
+            'helpdesk.auth' => HelpdeskAuth::class,
+        ]);
 
         $middleware->web(append: [
             HandleAppearance::class,

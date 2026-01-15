@@ -185,22 +185,22 @@ onMounted(async () => {
             <h6 class="text-md font-bold text-zinc-500 mt-2 leading-tight antialiased">Reports</h6>
             <div id="filters">
                 <div class="dropdown">
-                    <div tabindex="0" role="button" class="btn m-1 bg-base-100 ">Range: 6M</div>
-                    <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                    <div tabindex="0" role="button" class="btn m-1  ">Range: 6M</div>
+                    <ul tabindex="-1" class="dropdown-content menu  rounded-box z-1 w-52 p-2 shadow-sm">
                         <li><a>Item 1</a></li>
                         <li><a>Item 2</a></li>
                     </ul>
                 </div>
                 <div class="dropdown">
-                    <div tabindex="0" role="button" class="btn m-1 bg-base-100 ">Team: All</div>
-                    <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                    <div tabindex="0" role="button" class="btn m-1">Team: All</div>
+                    <ul tabindex="-1" class="dropdown-content menu rounded-box z-1 w-52 p-2 shadow-sm">
                         <li><a>Item 1</a></li>
                         <li><a>Item 2</a></li>
                     </ul>
                 </div>
             </div>
             <div class="grid gap-1 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 items-center">
-                <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4">
+                <div class="card bg-white dark:bg-zinc-950 card-lg shadow-sm mt-4">
                     <div class="card-body">
                         <h6 class="text-md text-zinc-500">Tickets Open</h6>
                         <div class="flex flex-row items-center justify-content">
@@ -212,7 +212,7 @@ onMounted(async () => {
                         <p class="text-sm text-zinc-600">-10 vs resolved</p>
                     </div>
                 </div>
-                <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4">
+                <div class="card bg-white dark:bg-zinc-950 card-lg shadow-sm mt-4">
                     <div class="card-body">
                         <h6 class="text-md text-zinc-500">Tickets Resolved</h6>
                         <div class="flex flex-row items-center justify-content">
@@ -224,7 +224,7 @@ onMounted(async () => {
                         <p class="text-sm text-zinc-600">-10 vs resolved</p>
                     </div>
                 </div>
-                <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4">
+                <div class="card bg-white dark:bg-zinc-950 card-lg shadow-sm mt-4">
                     <div class="card-body">
                         <h6 class="text-md text-zinc-500">CSAT</h6>
                         <div class="flex flex-row items-center justify-content">
@@ -236,7 +236,7 @@ onMounted(async () => {
                         <p class="text-sm text-zinc-600">-10 vs resolved</p>
                     </div>
                 </div>
-                <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4">
+                <div class="card bg-white dark:bg-zinc-950 card-lg shadow-sm mt-4">
                     <div class="card-body">
                         <h6 class="text-md text-zinc-500">SLA Breaches</h6>
                         <div class="flex flex-row items-center justify-content">
@@ -251,21 +251,21 @@ onMounted(async () => {
                 </div>
             </div>
             <div class="grid gap-4 grid-cols-1 lg:grid-cols-2">
-                <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4 h-96">
+                <div class="card bg-white dark:bg-zinc-950 card-lg shadow-sm mt-4 h-96">
                     <div class="card-body p-2 md:p-4">
                         <h6 class="text-sm text-zinc-400">Ticket Volume</h6>
                         <ApexChart ref="areaRef" class="dark:text-zinc-600" type="area" :options="areaOptions"
                             :series="areaSeries" height="90%" />
                     </div>
                 </div>
-                <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4  h-96">
+                <div class="card bg-white dark:bg-zinc-950 card-lg shadow-sm mt-4  h-96">
                     <div class="card-body p-2 md:p-4">
                         <h6 class="text-sm text-zinc-400">Ticket Completed By</h6>
                         <ApexChart ref="pieRef" type="pie" :options="pieOptions" :series="pieSeries" width="100%"
                             height="90%" />
                     </div>
                 </div>
-                <div class="card bg-base-100 dark:bg-zinc-950 card-lg shadow-sm mt-4 lg:col-span-2 h-96">
+                <div class="card bg-white dark:bg-zinc-950 card-lg shadow-sm mt-4 lg:col-span-2 h-96">
                     <div class="card-body p-2 md:p-4">
                         <h6 class="text-sm text-zinc-400">Ticket Completed By</h6>
                         <ApexChart ref="columnRef" class="dark:text-zinc-600" type="bar" :options="columnOptions"
