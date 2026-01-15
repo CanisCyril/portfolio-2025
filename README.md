@@ -26,8 +26,8 @@ Please note the portfolio is still at a very early stage.
 5. Fill in database connection settings in .env
 6. Run ```php artisan key:generate```
 7. Run ```php artisan migrate --seed```
-8. Run ```php artisan serve in terminal```
-9. Run ```npm run dev in another terminal```
+8. Run ```php artisan serve``` in terminal
+9. Run ```npm run dev``` in another terminal
 10. http://localhost:8000/ Use this link to get to Dashboard, this is just a simple dashboard
 design and there is not much functionality here. Projects section is temporary and will be
 replaced once the projects are completed.
