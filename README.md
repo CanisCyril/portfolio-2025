@@ -72,7 +72,7 @@ Planned Features:
 Notes:
 
 Unfortunately, I was not able to get this ready to be showcased,
-uploading the assets seems to make the entire system crash so 
-it was best not to include it with the time constraints.
-However, you will still be able to view the code.
+in time. Something relating to the assets was causing the system 
+to crash. However, you will still be able to view the code. 
+This projects has better examples of using services and SOLID.
 
